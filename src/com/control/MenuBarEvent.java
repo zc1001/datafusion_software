@@ -1,6 +1,10 @@
 package com.control;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import com.view.AppMain;
+import javax.swing.*;
+import com.view.allocationview;
 
 public class MenuBarEvent implements ActionListener{
     private javax.swing.JDesktopPane JDeskTop = null;
@@ -14,7 +18,10 @@ public class MenuBarEvent implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e)
     {
-
+        if (e.getActionCommand().equals("saw_allocation") || EventName.equals("saw_allocation")){
+             allocationview allo = new allocationview();
+             allo.init();
+        }
     }
 
 }

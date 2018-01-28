@@ -16,19 +16,19 @@ public class AppMain extends JFrame {
     JMenuBar jMenuBarMain = new JMenuBar(); // 定义界面中的主菜单控件
     JToolBar jToolBarMain = new JToolBar(); // 定义界面中的工具栏控件
 
-    public AppMain() {
-        try {
-            setDefaultCloseOperation(EXIT_ON_CLOSE);
-            BuildMenuBar();
-            BuildToolBar();
-            jbInit();
+   public void APPinit(){
+       try {
+           setDefaultCloseOperation(EXIT_ON_CLOSE);
+           BuildMenuBar();
+           BuildToolBar();
+           jbInit();
            test();
-            loadBackgroundImage();
+           loadBackgroundImage();
 
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-    }
+       } catch (Exception exception) {
+           exception.printStackTrace();
+       }
+   }
 
     /**
      * Component initialization.
@@ -170,7 +170,7 @@ public class AppMain extends JFrame {
     */
 
     private void BuildToolBar() {
-        String ImageName[] = { "test.png", "2.GIF", "3.GIF", "4.GIF", "5.GIF", "6.GIF", "7.GIF", };
+        String ImageName[] = { "1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "8.GIF", };
         String TipString[] = { "新建实验", "开始实验", "暂停实验", "停止实验", "配置", "浏览数据", "退出系统" };
         String ComandString[] = { "saw_new", "saw_start", "saw_suspend", "saw_end","saw_allocation" ,"saw_find", "saw_exit"};
         //
@@ -191,5 +191,9 @@ public class AppMain extends JFrame {
         test_panel.setBackground(Color.YELLOW);
         contentPane.add(test_panel,BorderLayout.EAST);
 
+    }
+    public Frame getframe() {
+        Frame f = (Frame)this;
+        return f;
     }
 }
