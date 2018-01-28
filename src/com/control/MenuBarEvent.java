@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import com.view.AppMain;
 import javax.swing.*;
 import com.view.allocationview;
+import com.view.newview;
 
 public class MenuBarEvent implements ActionListener{
     private javax.swing.JDesktopPane JDeskTop = null;
@@ -21,6 +22,10 @@ public class MenuBarEvent implements ActionListener{
         if (e.getActionCommand().equals("saw_allocation") || EventName.equals("saw_allocation")){
              allocationview allo = new allocationview();
              allo.init();
+        }
+        if (e.getActionCommand().equals("saw_new") || EventName.equals("saw_new")){
+          newview newvie = new newview();
+          newvie.init();
         }
     }
 

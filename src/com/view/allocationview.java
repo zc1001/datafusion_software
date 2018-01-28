@@ -113,6 +113,10 @@ public class allocationview extends JFrame  implements ActionListener,ItemListen
      * */
 
 
+     /*
+     * 在此处更改 为button 建立事件监听
+     * */
+
     public void actionPerformed(ActionEvent e)
     {
      if (e.getActionCommand().equals("yes")){
