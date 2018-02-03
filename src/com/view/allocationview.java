@@ -6,9 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.Toolkit;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
+
 public class allocationview extends JFrame  implements ActionListener,ItemListener{
     /*
     初始化设定，实现串口配置界面，包括初始化，结束,这里包括事件监听........；
@@ -19,7 +17,7 @@ public class allocationview extends JFrame  implements ActionListener,ItemListen
     JComboBox comBox2;
     JTextField num; //通道数量
     JButton button_yes,button_no;
-    String s,s2,snum;    //记录 combox 两个item内容
+   public String s_com,s_pinlv,snum;    //记录 combox 两个item内容
 
     public void init(){
         view();
@@ -55,6 +53,7 @@ public class allocationview extends JFrame  implements ActionListener,ItemListen
          * 选择串口*/
          c.add(new JLabel("请选择串口                    "));
          comBox = new JComboBox();
+         comBox.addItem("        ");
          comBox.addItem("  COM1  ");
          comBox.addItem("  COM2  ");
          comBox.addItemListener(this);
@@ -85,6 +84,7 @@ public class allocationview extends JFrame  implements ActionListener,ItemListen
          * */
          c.add(new JLabel("         请选择抽样频率          "));
          comBox2 = new JComboBox();
+         comBox2.addItem("       ");
          comBox2.addItem("  1.0  ");
          comBox2.addItem("  1.5  ");
          comBox2.addItem("  2.0  ");
@@ -122,8 +122,8 @@ public class allocationview extends JFrame  implements ActionListener,ItemListen
      if (e.getActionCommand().equals("yes")){
          snum = num.getText();
          System.out.println("最终结果:");
-         System.out.println(s);
-         System.out.println(s2);
+         System.out.println(s_com);
+         System.out.println(s_pinlv);
          System.out.println(snum);
      }
      if(e.getActionCommand().equals("no")){
@@ -133,9 +133,9 @@ public class allocationview extends JFrame  implements ActionListener,ItemListen
     public void itemStateChanged(ItemEvent e){
         if(e.getStateChange() == ItemEvent.SELECTED)
         {
-            s=(String)comBox.getSelectedItem();
+            s_com=(String)comBox.getSelectedItem();
           //  System.out.println(s);
-            s2 = (String)comBox2.getSelectedItem();
+            s_pinlv = (String)comBox2.getSelectedItem();
            // System.out.println(s2);
 
           /*  String snum = num.getText();

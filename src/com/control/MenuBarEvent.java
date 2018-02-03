@@ -7,7 +7,9 @@ import javax.swing.*;
 import com.view.allocationview;
 import com.view.newview;
 
-public class MenuBarEvent implements ActionListener{
+public class MenuBarEvent extends JFrame implements ActionListener{
+    //AppMain y = new AppMain();
+    AppMain j;
     private javax.swing.JDesktopPane JDeskTop = null;
     private String EventName = "";  //定义事件的名字
     public void setDeskTop(javax.swing.JDesktopPane deskTop) {
@@ -15,6 +17,12 @@ public class MenuBarEvent implements ActionListener{
     }
     public void setEventName(String eventName) {
         this.EventName = eventName;
+    }
+    /*先定义set 在APPmain中定义，传过来之后，使用本地的函数调用此函数，获取APPMain，然后处理,在函数中定义可以 OK
+    * */
+    public AppMain setAPP(AppMain appm){
+       j = appm;
+       return j;
     }
     @Override
     public void actionPerformed(ActionEvent e)
@@ -27,6 +35,10 @@ public class MenuBarEvent implements ActionListener{
           newview newvie = new newview();
           newvie.init();
         }
+        if (e.getActionCommand().equals("saw_about") || EventName.equals("saw_about")){
+            j.setview();
+        }
+
     }
 
 }

@@ -9,6 +9,10 @@ import javax.swing.*;
 import javax.swing.JComboBox;
 import com.view.allocationview;
 
+
+/*
+* 是没用的
+*/
 public class allocationEvent implements ActionListener,ItemListener {
     JComboBox jb1 ;
     JComboBox jb2;

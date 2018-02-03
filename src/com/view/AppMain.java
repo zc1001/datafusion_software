@@ -1,29 +1,38 @@
 package com.view;
-
 import com.control.MenuBarEvent;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.CardLayout;
+import com.view.dataplay;
 
 public class AppMain extends JFrame {
     private static final long serialVersionUID = -8348833890456775157L;
     JPanel contentPane;
     BorderLayout borderLayout1 = new BorderLayout();
     JDesktopPane desktop = new JDesktopPane();
+    JDesktopPane destest = new JDesktopPane();
     MenuBarEvent _MenuBarEvent = new MenuBarEvent(); // 自定义事件类处理
     JMenuBar jMenuBarMain = new JMenuBar(); // 定义界面中的主菜单控件
     JToolBar jToolBarMain = new JToolBar(); // 定义界面中的工具栏控件
+    CardLayout card = new CardLayout();
+    public JPanel Cpanel = new JPanel(card);
+    JPanel Mainpanel = new JPanel();    //欢迎界面之后的界面 实现数据显示
+
+
 
    public void APPinit(){
        try {
+           _MenuBarEvent.setAPP(this);
            setDefaultCloseOperation(EXIT_ON_CLOSE);
            BuildMenuBar();
            BuildToolBar();
            jbInit();
-           test();
-           loadBackgroundImage();
+         //  test();
+         //  loadBackgroundImage();
+           cardpanelinit();
+
 
        } catch (Exception exception) {
            exception.printStackTrace();
@@ -42,9 +51,10 @@ public class AppMain extends JFrame {
         contentPane.setLayout(borderLayout1);
         setSize(new Dimension(1300, 800));
         setTitle("多参量数据融合处理平台");
-        contentPane.add(desktop, BorderLayout.CENTER);
+      //  cardpanel.setLayout(new CardLayout());
+        contentPane.add(Cpanel, BorderLayout.CENTER);
         contentPane.add(jToolBarMain, BorderLayout.NORTH);
-        _MenuBarEvent.setDeskTop(desktop);
+       // _MenuBarEvent.setDeskTop(desktop);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
          Dimension frameSize = getSize();
         if (frameSize.height > screenSize.height) {
@@ -56,15 +66,39 @@ public class AppMain extends JFrame {
         setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
         setVisible(true);
 
-    }
-
-    protected void loadBackgroundImage() {
-        ImageIcon icon = new ImageIcon(this.getClass().getResource("/picture/main.jpg"));
-        JLabel jl = new JLabel(icon);
-        jl.setBounds(0, 0, icon.getIconWidth(), icon.getIconHeight());
-        desktop.add(jl, new Integer(Integer.MIN_VALUE));
 
     }
+      private void cardpanelinit(){
+        /*
+        * 初始界面
+        * */
+          _MenuBarEvent.setDeskTop(desktop);
+          ImageIcon icon = new ImageIcon(this.getClass().getResource("/picture/main.jpg"));
+          JLabel jl = new JLabel(icon);
+          jl.setBounds(0, 0, icon.getIconWidth(), icon.getIconHeight());
+          desktop.add(jl, new Integer(Integer.MIN_VALUE));
+          Cpanel.add(desktop,"welcome");
+          card.first(Cpanel);
+          Cpanel.setVisible(true);
+          /*
+          * 定义主界面 数据显示部分，两个panel
+          * */
+
+          dataplay data_view = new dataplay();
+          data_view.viewinit();//初始化
+          Mainpanel = data_view.getMainpanel();
+          Cpanel.add(Mainpanel,"datapanel");
+        //  Dimension frameSize = contentPane.getSize();
+         // System.out.println(frameSize.height);   用这个测试
+
+      }
+
+     /*
+     * 测试
+     * */
+      public void setview(){
+        card.previous(Cpanel);
+      }
     /*
      Menu bar
      定义界面
@@ -184,14 +218,21 @@ public class AppMain extends JFrame {
             jToolBarMain.add(jb);
         }
     }
-    private void test() {
+
+    /*
+    * 设置左边的界面 作参考
+    * */
+  /*  private void test() {
         JDesktopPane test_panel = new JDesktopPane();
         Dimension frameSize = contentPane.getSize();
         test_panel.setPreferredSize(new Dimension(100, frameSize.height));  //只能用这个改
         test_panel.setBackground(Color.YELLOW);
         contentPane.add(test_panel,BorderLayout.EAST);
 
-    }
+    }*/
+   /* private void setvie(){
+        _MenuBarEvent.setAPP(this);
+    }*/
     public Frame getframe() {
         Frame f = (Frame)this;
         return f;
