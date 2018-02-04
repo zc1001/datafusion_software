@@ -29,14 +29,18 @@ public class MenuBarEvent extends JFrame implements ActionListener{
     {
         if (e.getActionCommand().equals("saw_allocation") || EventName.equals("saw_allocation")){
              allocationview allo = new allocationview();
+            allo.setAPPmain(j);
              allo.init();
+
         }
         if (e.getActionCommand().equals("saw_new") || EventName.equals("saw_new")){
           newview newvie = new newview();
+          newvie.setAPPmain(j);
           newvie.init();
+
         }
         if (e.getActionCommand().equals("saw_about") || EventName.equals("saw_about")){
-            j.setview();
+            j.changeview();
         }
 
     }

@@ -1,4 +1,5 @@
 package com.view;
+import com.Main;
 import com.control.MenuBarEvent;
 import javax.swing.*;
 import java.awt.*;
@@ -19,7 +20,8 @@ public class AppMain extends JFrame {
     CardLayout card = new CardLayout();
     public JPanel Cpanel = new JPanel(card);
     JPanel Mainpanel = new JPanel();    //欢迎界面之后的界面 实现数据显示
-
+    String s_com,s_pinlv,snum;   //接收串口配置的字符串
+    String s_place,s_temp,s_shi,s_gas,s_other,s_name; //接收实验条件的信息
 
 
    public void APPinit(){
@@ -31,7 +33,7 @@ public class AppMain extends JFrame {
            jbInit();
          //  test();
          //  loadBackgroundImage();
-           cardpanelinit();
+           cardpanel_firinit();
 
 
        } catch (Exception exception) {
@@ -68,7 +70,7 @@ public class AppMain extends JFrame {
 
 
     }
-      private void cardpanelinit(){
+      private void cardpanel_firinit(){
         /*
         * 初始界面
         * */
@@ -78,26 +80,41 @@ public class AppMain extends JFrame {
           jl.setBounds(0, 0, icon.getIconWidth(), icon.getIconHeight());
           desktop.add(jl, new Integer(Integer.MIN_VALUE));
           Cpanel.add(desktop,"welcome");
-          card.first(Cpanel);
+          changeviewfirst();
           Cpanel.setVisible(true);
-          /*
-          * 定义主界面 数据显示部分，两个panel
-          * */
 
-          dataplay data_view = new dataplay();
-          data_view.viewinit();//初始化
-          Mainpanel = data_view.getMainpanel();
-          Cpanel.add(Mainpanel,"datapanel");
-        //  Dimension frameSize = contentPane.getSize();
-         // System.out.println(frameSize.height);   用这个测试
 
       }
+        public void cardpanel_secinit(){
+            /*
+             * 定义主界面 数据显示部分，两个panel
+             * */
 
+            dataplay data_view = new dataplay();
+            data_view.setAPPpanel(this);
+            data_view.viewinit();//初始化
+            Mainpanel = data_view.getMainpanel();
+            Cpanel.add(Mainpanel,"datapanel");
+            //  Dimension frameSize = contentPane.getSize();
+            // System.out.println(frameSize.height);   用这个测试
+            /*
+             * 将APPmain传入dataplay
+             * */
+        }
      /*
-     * 测试
+     * 使用此函数，实现主界面进入通道显示界面
      * */
-      public void setview(){
-        card.previous(Cpanel);
+      public void changeview(){
+          cardpanel_secinit();
+          card.previous(Cpanel);
+      }
+      /*
+      * 使用此函数返回主界面，并实现数据重置
+      * */
+      public void changeviewfirst(){
+          card.first(Cpanel);
+          Main.ifallo = false;
+          Main.ifnew = false;
       }
     /*
      Menu bar
@@ -237,4 +254,35 @@ public class AppMain extends JFrame {
         Frame f = (Frame)this;
         return f;
     }
+  /*
+  * 接收串口配置的信息
+  * */
+    public void setS_com(String S1){
+        s_com = S1;
+
+    }
+    public void setS_pinlv(String s2){
+        s_pinlv = s2;
+    }
+    public void setSnum(String s3){
+        snum = s3;
+    }
+   /*
+   * 获取实验条件信息
+   * */
+    public void setgas_message(String s1,String s2,String s3,String s4,String s5,String s6){
+        s_place = s1;
+        s_temp = s2;
+        s_shi = s3;
+        s_gas = s4;
+        s_other = s5;
+        s_name = s6;
+    }
+    /*
+    * 传送 串口信息
+    * */
+    public String getS_com(){ return s_com ;}
+    public String getS_pinlv(){return s_pinlv ;}
+    public String getSnum(){ return snum; }
+
 }

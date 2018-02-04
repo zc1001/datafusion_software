@@ -7,6 +7,9 @@ import java.awt.Toolkit;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 
+import com.Main;
+import com.view.AppMain;
+
 public class allocationview extends JFrame  implements ActionListener,ItemListener{
     /*
     初始化设定，实现串口配置界面，包括初始化，结束,这里包括事件监听........；
@@ -17,12 +20,19 @@ public class allocationview extends JFrame  implements ActionListener,ItemListen
     JComboBox comBox2;
     JTextField num; //通道数量
     JButton button_yes,button_no;
+   public AppMain j;
+    AppMain x;
    public String s_com,s_pinlv,snum;    //记录 combox 两个item内容
 
     public void init(){
         view();
         d.setVisible(true);
     }
+    public void setAPPmain(AppMain apPmain){
+        j = apPmain;
+
+    }
+
      private void view(){
 
          AppMain panel = new AppMain();
@@ -116,31 +126,39 @@ public class allocationview extends JFrame  implements ActionListener,ItemListen
      /*
      * 在此处更改 为button 建立事件监听
      * */
+     public void itemStateChanged(ItemEvent e){
+         if(e.getStateChange() == ItemEvent.SELECTED)
+         {
+             s_com=(String)comBox.getSelectedItem();
+             //  System.out.println(s);
+             s_pinlv = (String)comBox2.getSelectedItem();
+             // System.out.println(s2);
 
+          /*  String snum = num.getText();
+            System.out.println(snum);*/
+         }
+     }
     public void actionPerformed(ActionEvent e)
     {
      if (e.getActionCommand().equals("yes")){
-         snum = num.getText();
+         snum = num.getText();   //获取通道数
          System.out.println("最终结果:");
          System.out.println(s_com);
          System.out.println(s_pinlv);
          System.out.println(snum);
+         j.setS_com(s_com);
+         j.setS_pinlv(s_pinlv);
+         j.setSnum(snum);
+         Main.ifallo = true;
+         d.setVisible(false);
+
      }
      if(e.getActionCommand().equals("no")){
         d.setVisible(false);
      }
     }
-    public void itemStateChanged(ItemEvent e){
-        if(e.getStateChange() == ItemEvent.SELECTED)
-        {
-            s_com=(String)comBox.getSelectedItem();
-          //  System.out.println(s);
-            s_pinlv = (String)comBox2.getSelectedItem();
-           // System.out.println(s2);
 
-          /*  String snum = num.getText();
-            System.out.println(snum);*/
-        }
-    }
+
+
 
 }

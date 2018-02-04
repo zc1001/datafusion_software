@@ -6,6 +6,9 @@ import java.awt.event.ActionListener;
 import java.awt.Toolkit;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+
+import com.Main;
+import com.view.AppMain;
 /*
 * 实现新建实验中的输入条件，同时实现事件监听
 * */
@@ -15,6 +18,7 @@ public class newview extends JFrame implements ActionListener {
     JTextArea area_place,area_temp,area_shi,area_gas,other,area_name;
     JButton button_yes,button_no;
     String s_place,s_temp,s_shi,s_gas,s_other,s_name;
+    AppMain j;  //接收APPmain
     /*
     * 初始化
     * */
@@ -93,11 +97,30 @@ public class newview extends JFrame implements ActionListener {
             s_shi = area_shi.getText();
             s_temp = area_temp.getText();
             System.out.println(s_gas  +s_name   +s_other  +s_place  +s_shi);
+            j.setgas_message(s_place,s_temp,s_shi,s_gas,s_other,s_name);
+            Main.ifnew = true;
             d.setVisible(false);
+            dataviewstart();
+
         }
         if(e.getActionCommand().equals("no")){
             d.setVisible(false);
         }
     }
+    public void setAPPmain(AppMain appmain){
+        j = appmain;
+    }
+    public void dataviewstart(){
+        if(Main.ifallo == true)
+        {
+            System.out.println("实验创建OK，from newview");
+            j.changeview();
+        }
+        /*
+        * 要加else语句 如果没有写之前的配置不能开始创建实验
+        * */
+
+    }
+
 
 }
