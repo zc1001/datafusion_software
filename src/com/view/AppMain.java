@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.CardLayout;
 import com.view.dataplay;
+import com.view.JFSwingDynamicChart;
 
 public class AppMain extends JFrame {
     private static final long serialVersionUID = -8348833890456775157L;
@@ -22,11 +23,12 @@ public class AppMain extends JFrame {
     JPanel Mainpanel = new JPanel();    //欢迎界面之后的界面 实现数据显示
     String s_com,s_pinlv,snum;   //接收串口配置的字符串
     String s_place,s_temp,s_shi,s_gas,s_other,s_name; //接收实验条件的信息
-
+    JFSwingDynamicChart Jchart ;
 
    public void APPinit(){
        try {
-           _MenuBarEvent.setAPP(this);
+           _MenuBarEvent.setAPP(this);  //传 面板
+           _MenuBarEvent.setFrame(this);//传 界面
            setDefaultCloseOperation(EXIT_ON_CLOSE);
            BuildMenuBar();
            BuildToolBar();
@@ -85,24 +87,27 @@ public class AppMain extends JFrame {
 
 
       }
+      /*
+      * 数据传送界面初始化
+      * */
         public void cardpanel_secinit(){
             /*
-             * 定义主界面 数据显示部分，两个panel
+             * 定义主界面 数据显示部分；
+             * 在此界面进行dataplay 的实例对象data_view，调用函数，实现dtata_view的界面初始化和chart对象
+             * 在这个类中向data_view传送事件监听，data_view向事件监听传送chart对象
+             * 在data_view中进行处理
+             *向事件监听传送界面
              * */
 
             dataplay data_view = new dataplay();
             data_view.setAPPpanel(this);
-            data_view.viewinit();//初始化
+            data_view.viewinit();//初始化，实现两个界面（data view和contr view）的初始化和chart对象
+            data_view.setMenuEvent(_MenuBarEvent);  //向data_view传送事件监听，让他获取事件监听之后向事件监听传送chart实例
             Mainpanel = data_view.getMainpanel();
             Cpanel.add(Mainpanel,"datapanel");
-            //  Dimension frameSize = contentPane.getSize();
-            // System.out.println(frameSize.height);   用这个测试
-            /*
-             * 将APPmain传入dataplay
-             * */
         }
      /*
-     * 使用此函数，实现主界面进入通道显示界面
+     * 使用此函数，实现主界面进入通道显示界面,进行转换
      * */
       public void changeview(){
           cardpanel_secinit();
@@ -237,8 +242,8 @@ public class AppMain extends JFrame {
     }
 
     /*
-    * 设置左边的界面 作参考
-    * */
+     * 设置左边的界面 作参考
+     * */
   /*  private void test() {
         JDesktopPane test_panel = new JDesktopPane();
         Dimension frameSize = contentPane.getSize();

@@ -2,14 +2,19 @@ package com.control;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import com.view.AppMain;
 import javax.swing.*;
 import com.view.allocationview;
 import com.view.newview;
-
-public class MenuBarEvent extends JFrame implements ActionListener{
+import com.view.JFSwingDynamicChart;
+public class MenuBarEvent extends JFrame implements ActionListener,Runnable{
     //AppMain y = new AppMain();
     AppMain j;
+    JFrame frame; //获取当前页面
+    JFSwingDynamicChart Jchart;   //接收dataplay传来的 chart实例对象
     private javax.swing.JDesktopPane JDeskTop = null;
     private String EventName = "";  //定义事件的名字
     public void setDeskTop(javax.swing.JDesktopPane deskTop) {
@@ -40,9 +45,41 @@ public class MenuBarEvent extends JFrame implements ActionListener{
 
         }
         if (e.getActionCommand().equals("saw_about") || EventName.equals("saw_about")){
-            j.changeview();
+            (new Thread(this)).start();
+            frame.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent windowevent) {
+                    System.exit(0);
+                }
+            });
         }
 
     }
-
+    public void setFrame(JFrame f){
+        frame = f;
+    }
+    /*
+    * 获取dataplay传来的chart实例对象
+    * */
+    public void setJchart(JFSwingDynamicChart Jc){
+        Jchart = Jc;
+        if(Jchart ==null)
+            System.out.println(" Jchart null");
+        else
+            System.out.println("not null");
+    }
+    /*
+    * run函数
+    * */
+    @Override
+    public void run(){
+        while(true)
+        {
+            try {
+                Jchart.setNumber(Math.random()*100 );
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+            }
+        }
+    }
 }

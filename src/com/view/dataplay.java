@@ -12,11 +12,15 @@ import java.awt.event.ActionListener;
 import com.control.dataplayEvent;
 import java.awt.event.ItemListener;
 import com.view.AppMain;
-
+import com.view.JFSwingDynamicChart;
+import com.control.MenuBarEvent;
 public class dataplay extends JFrame {
     /*
-    * 实现数据传输界面,曲线显示，和控制界面
+    * 实现数据传输界面,曲线显示，和控制界面，实现初始化界面，chart对象
+    * 接收AppMain传送来的事件监听，向事件监听传送chart对象
     * */
+
+
     JPanel mainpanel = new JPanel();   //主界面和layout
     BorderLayout mainlayout = new BorderLayout();
     JPanel contentPane=(JPanel) getContentPane();
@@ -28,17 +32,19 @@ public class dataplay extends JFrame {
     AppMain j;   //接收APPmain
     String s_com,s_pinlv,snum;   //接收串口配置的字符串
     String s_place,s_temp,s_shi,s_gas,s_other,s_name; //接收实验条件的信息
+    JFSwingDynamicChart JSchart = new JFSwingDynamicChart();
+    MenuBarEvent MenuEvent;   //接收主界面中的事件监听，为他传送chart对象
    /*
    * 界面初始化
    * */
     public void viewinit(){
-        mainviewinit();
+        mainpanel.setLayout(mainlayout);
+        dataviewinit();
         conviewinit();
     }
 
-    public void mainviewinit(){
-        mainpanel.setLayout(mainlayout);
-        testpanel.setBackground(Color.GRAY);
+    public void dataviewinit(){
+        testpanel = JSchart.getDatapanel();
         mainpanel.add(testpanel,BorderLayout.CENTER);
 
     }
@@ -91,11 +97,6 @@ public class dataplay extends JFrame {
         {
             control_panel.add(new JLabel(block));
         }
-        //control_panel.add(new JLabel("testtest"));
-
-
-
-
     }
 
     /*
@@ -104,5 +105,25 @@ public class dataplay extends JFrame {
     public JPanel getMainpanel() {
         return mainpanel;
     }
+/*
+    */
+/*
+    * 获取chart对象
+    * *//*
+
+    public JFSwingDynamicChart getJSchart(){
+        return JSchart;
+    }
+*/
+    /*
+    * 获取MenuBarEvent 对象 向他传送实例的chart对象
+    * */
+    public void setMenuEvent(MenuBarEvent menu){
+        MenuEvent = menu;
+        MenuEvent.setJchart(JSchart);   //向MenuEvent传送JSchart
+    }
+    /*
+    * 向menubar传送chart对象 （JFSwing）
+    * */
 
 }
