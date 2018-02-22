@@ -18,6 +18,7 @@ public class dataplay extends JFrame {
     /*
     * 实现数据传输界面,曲线显示，和控制界面，实现初始化界面，chart对象
     * 接收AppMain传送来的事件监听，向事件监听传送chart对象
+    * dataview界面初始化 动态，有时间监听传送字符串 在此进行界面转换
     * */
 
 
@@ -27,26 +28,53 @@ public class dataplay extends JFrame {
     FlowLayout conlayout = new FlowLayout(FlowLayout.LEFT );
     JPanel control_panel = new JPanel();
     JPanel testpanel = new JPanel();   //tiaose
+    JPanel data_panel = new JPanel(); //定义数据的界面
+    CardLayout datalayout = new CardLayout(); //定义数据界面布局
     ButtonGroup group;
     dataplayEvent dataevent = new dataplayEvent(); //事件监听
     AppMain j;   //接收APPmain
     String s_com,s_pinlv,snum;   //接收串口配置的字符串
     String s_place,s_temp,s_shi,s_gas,s_other,s_name; //接收实验条件的信息
-    JFSwingDynamicChart JSchart = new JFSwingDynamicChart();
+    JFSwingDynamicChart JSchart = new JFSwingDynamicChart();   //测试用
     MenuBarEvent MenuEvent;   //接收主界面中的事件监听，为他传送chart对象
+   JFSwingDynamicChart[] Jchart;    //随机定义的多个chart对象
    /*
    * 界面初始化
    * */
     public void viewinit(){
+        dataevent.setDatview(this);   //把本界面传给事件监听 进行数据界面转换
         mainpanel.setLayout(mainlayout);
-        dataviewinit();
         conviewinit();
+        dataviewinit();
+
     }
 
     public void dataviewinit(){
-        testpanel = JSchart.getDatapanel();
-        mainpanel.add(testpanel,BorderLayout.CENTER);
+        data_panel.setLayout(datalayout);  //定义界面 Cardlayout
+        int tdnum = Integer.parseInt(snum);  //获取通道的数量
+         Jchart = new JFSwingDynamicChart[tdnum];  //新建多个对象
+        for(int i=0;i<tdnum;i++)                        //实例化
+        {
+            Jchart[i] = new JFSwingDynamicChart();
+        }
+        for(int i=0;i<tdnum;i++)               //定义多个通道
+        {
+            Jchart[i].setgonum((i+1));   //向chart对象放数字 用于命名
+           JPanel chartPanel = Jchart[i].getDatapanel();
+           String goname = Integer.toString(i+1);    //为本界面设定名字 第一个界面 名字为 1
+           data_panel.add(chartPanel,goname);
+        }
+        data_panel.setVisible(true);
+        mainpanel.add(data_panel,BorderLayout.CENTER);
+         changedt("1");   //初始化进入界面
 
+    }
+    /*
+    * 转换通道,k 为第几通道，K为String
+    * */
+    public void changedt(String k){
+
+        datalayout.show(data_panel,k);
     }
     /*
      * 接收APPmain
@@ -85,8 +113,9 @@ public class dataplay extends JFrame {
         for(int i=0;i<rad_name.length;i++)
         {
             JRadioButton radio = new JRadioButton(rad_name[i]);
-            radio.setActionCommand(rad_name[i]);
-            radio.addItemListener(dataevent);
+            String rname = Integer.toString(i+1);  //设定第几通道 作为 command
+            radio.setActionCommand(rname);
+            radio.addActionListener(dataevent);
             group.add(radio);
             control_panel.add(radio);
         }
@@ -120,7 +149,7 @@ public class dataplay extends JFrame {
     * */
     public void setMenuEvent(MenuBarEvent menu){
         MenuEvent = menu;
-        MenuEvent.setJchart(JSchart);   //向MenuEvent传送JSchart
+        MenuEvent.setJchart(Jchart[1]);   //向MenuEvent传送JSchart
     }
     /*
     * 向menubar传送chart对象 （JFSwing）

@@ -30,6 +30,7 @@ public class JFSwingDynamicChart extends JFrame  {
     private Font font = new Font("宋书",Font.PLAIN,15);
     JPanel datapanel = new JPanel();
     BorderLayout border = new BorderLayout();
+    int gonum = 1;
     /**
      * 构造
      */
@@ -70,8 +71,8 @@ public class JFSwingDynamicChart extends JFrame  {
         plot.setDomainAxis(xAxis);*/
 
 
-
-        series = new TimeSeries("Math.random()-随机数据", Millisecond.class);
+         String title = new String("第"+gonum+"通道");
+        series = new TimeSeries(title, Millisecond.class);
         TimeSeriesCollection dataset = new TimeSeriesCollection(this.series);
         ChartPanel chartPanel = new ChartPanel(createChart(dataset));
         //chartPanel.setPreferredSize(new Dimension(500, 270));
@@ -89,7 +90,7 @@ public class JFSwingDynamicChart extends JFrame  {
      * @return
      */
     public JFreeChart createChart(XYDataset dataset) {
-        JFreeChart result = ChartFactory.createTimeSeriesChart("Swing动态折线图", "系统当前时间",
+        JFreeChart result = ChartFactory.createTimeSeriesChart("测量数据折线图", "系统当前时间",
                 "动态数值变化", dataset, true, true, false);
         XYPlot plot = (XYPlot) result.getPlot();
         ValueAxis axis = plot.getDomainAxis();
@@ -142,6 +143,9 @@ public class JFSwingDynamicChart extends JFrame  {
         }*/
      //   System.out.println("hello  jfs"+System.currentTimeMillis());
 
+    }
+    public void setgonum(int i){
+        gonum = i;
     }
 
 
