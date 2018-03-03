@@ -132,7 +132,7 @@ public class JFSwingDynamicChart extends JFrame  {
         /*
          * 设定一个set函数，接收数字并显示
          * */
-            series.add(new Millisecond(),a);
+            series.addOrUpdate(new Millisecond(),a);
 
 
 

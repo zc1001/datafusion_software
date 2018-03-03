@@ -47,6 +47,7 @@ public class dataplay extends JFrame {
         conviewinit();
         dataviewinit();
 
+
     }
 
     public void dataviewinit(){
@@ -149,7 +150,8 @@ public class dataplay extends JFrame {
     * */
     public void setMenuEvent(MenuBarEvent menu){
         MenuEvent = menu;
-        MenuEvent.setJchart(Jchart[1]);   //向MenuEvent传送JSchart
+        MenuEvent.setJchart(Jchart);   //向MenuEvent传送JSchart
+
     }
     /*
     * 向menubar传送chart对象 （JFSwing）
