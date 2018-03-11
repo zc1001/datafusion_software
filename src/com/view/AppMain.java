@@ -22,7 +22,8 @@ public class AppMain extends JFrame {
     public JPanel Cpanel = new JPanel(card);
     JPanel Mainpanel = new JPanel();    //欢迎界面之后的界面 实现数据显示
     String s_com,s_pinlv,snum;   //接收串口配置的字符串
-    String s_place,s_temp,s_shi,s_gas,s_other,s_name; //接收实验条件的信息
+    public String s_place,s_temp,s_shi,s_gas,s_other,s_name; //接收实验条件的信息
+    int tdnum;    //定义通道数量
     JFSwingDynamicChart Jchart ;
 
    public void APPinit(){
@@ -101,6 +102,7 @@ public class AppMain extends JFrame {
 
             dataplay data_view = new dataplay();
             data_view.setAPPpanel(this);
+            data_view.setsaw_massage(s_place,s_temp,s_shi,s_gas,s_other,s_name);
             data_view.viewinit();//初始化，实现两个界面（data view和contr view）的初始化和chart对象
             data_view.setMenuEvent(_MenuBarEvent);  //向data_view传送事件监听，让他获取事件监听之后向事件监听传送chart实例
             Mainpanel = data_view.getMainpanel();

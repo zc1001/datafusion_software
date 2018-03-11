@@ -10,7 +10,9 @@ import org.jfree.data.time.Millisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
-
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.DateTickUnit;
+import java.text.SimpleDateFormat;
 import javax.swing.*;
 import java.awt.*;
 
@@ -94,6 +96,9 @@ public class JFSwingDynamicChart extends JFrame  {
                 "动态数值变化", dataset, true, true, false);
         XYPlot plot = (XYPlot) result.getPlot();
         ValueAxis axis = plot.getDomainAxis();
+    //   DateAxis domainAxis = (DateAxis)plot.getDomainAxis();
+//设置时间间隔和时间轴显示格式：1个月一个间隔
+       // domainAxis.setTickUnit(new DateTickUnit(DateTickUnit.SECOND, 5, new SimpleDateFormat("mm:ss")));
         axis.setAutoRange(true);
         axis.setFixedAutoRange(60000.0);
         axis = plot.getRangeAxis();

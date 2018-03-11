@@ -120,14 +120,81 @@ public class dataplay extends JFrame {
             group.add(radio);
             control_panel.add(radio);
         }
-        String block = "         ";
+        String block = "                   ";
         Tnum %= 3;
         if(Tnum>0)
-        for(int i = 0;i<Tnum;i++)
         {
-            control_panel.add(new JLabel(block));
+            Tnum = 3-Tnum;
+            for(int i = 0;i<Tnum;i++)
+            {
+                control_panel.add(new JLabel(block));
+            }
         }
+
+        /*实验信息
+        * */
+        JLabel b = new JLabel("实验信息                                        ");
+        b.setFont(new Font("宋体",1,16));
+        control_panel.add(b);
+       // JLabel mess = new JLabel("<html>"+s_name+"<br>" + s_place+"<br>"+s_gas+"<br>"+s_shi+"<br>"+s_temp+"<br>"+s_other+"<br>"+"</html>",JLabel.CENTER);
+      //  mess.setFont(new Font("宋体",0,15));
+      //  control_panel.add(mess);
+        JLabel name = new JLabel();
+        JLabel place = new JLabel();
+        JLabel gas = new JLabel();
+        JLabel other = new JLabel();
+        JLabel tem = new JLabel();
+        JLabel sd = new JLabel();
+        name.setSize(220,0);
+        place.setSize(220,0);
+        gas.setSize(220,0);
+        other.setSize(220,0);
+        tem.setSize(220,0);
+        sd.setSize(220,0);
+        try{
+            JlabelSetText(name,s_name);
+            JlabelSetText(place,s_place);
+            JlabelSetText(gas,s_gas);
+            JlabelSetText(other,s_other);
+            JlabelSetText(tem,s_temp);
+            JlabelSetText(sd,s_shi);
+        }catch (Exception e){
+
+        };
+        control_panel.add(name);
+        control_panel.add(place);
+        control_panel.add(gas);
+        control_panel.add(tem);
+        control_panel.add(sd);
+        control_panel.add(other);
     }
+
+    void JlabelSetText(JLabel jLabel, String longString)
+            throws InterruptedException {
+        StringBuilder builder = new StringBuilder("<html>");
+        char[] chars = longString.toCharArray();
+        FontMetrics fontMetrics = jLabel.getFontMetrics(jLabel.getFont());
+        int start = 0;
+        int len = 0;
+        while (start + len < longString.length()) {
+            while (true) {
+                len++;
+                if (start + len > longString.length())break;
+                if (fontMetrics.charsWidth(chars, start, len)
+                        > jLabel.getWidth()) {
+                    break;
+                }
+            }
+            builder.append(chars, start, len-1).append("<br/>");
+            start = start + len - 1;
+            len = 0;
+        }
+        builder.append(chars, start, longString.length()-start);
+        builder.append("</html>");
+        jLabel.setText(builder.toString());
+    }
+
+
 
     /*
     * 传送此panel APPmain中使用
@@ -156,5 +223,18 @@ public class dataplay extends JFrame {
     /*
     * 向menubar传送chart对象 （JFSwing）
     * */
+
+    /*
+    * 传送实验信息
+    * */
+    public void setsaw_massage(String s1,String s2,String s3,String s4,String s5,String s6){
+        s_place = s1;
+        s_temp = s2;
+        s_shi = s3;
+        s_gas = s4;
+        s_other = s5;
+        s_name = s6;
+    }
+
 
 }
