@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.CardLayout;
 import com.view.dataplay;
 import com.view.JFSwingDynamicChart;
-
+import com.view.findview;
 public class AppMain extends JFrame {
     private static final long serialVersionUID = -8348833890456775157L;
     JPanel contentPane;
@@ -25,6 +25,7 @@ public class AppMain extends JFrame {
     public String s_place,s_temp,s_shi,s_gas,s_other,s_name; //接收实验条件的信息
     int tdnum;    //定义通道数量
     JFSwingDynamicChart Jchart ;
+    JPanel xinxipanel ;  //查看实验信息的界面
 
    public void APPinit(){
        try {
@@ -107,6 +108,21 @@ public class AppMain extends JFrame {
             data_view.setMenuEvent(_MenuBarEvent);  //向data_view传送事件监听，让他获取事件监听之后向事件监听传送chart实例
             Mainpanel = data_view.getMainpanel();
             Cpanel.add(Mainpanel,"datapanel");
+        }
+        /*
+        * 第三个界面初始化
+        * */
+        public void thirdvie_ini(){
+             findview findv = new findview();
+             findv.mainpanelinit();  //初始化
+             xinxipanel = findv.getMainpanel();  //获取界面
+            Cpanel.add(xinxipanel,"findview");
+        }
+        /*转换到第三个界面
+        * */
+        public void changeviewthird(){
+            thirdvie_ini();
+            card.show(Cpanel,"findview");  //显示界面
         }
      /*
      * 使用此函数，实现主界面进入通道显示界面,进行转换

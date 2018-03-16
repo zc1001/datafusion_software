@@ -110,6 +110,10 @@ public class MenuBarEvent extends JFrame implements ActionListener,Runnable{
 
         }
 
+        if(e.getActionCommand().equals("saw_find") || EventName.equals("saw_find")){
+            j.changeviewthird();
+        }
+
     }
     public void setFrame(JFrame f){
         frame = f;
