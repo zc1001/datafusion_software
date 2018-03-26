@@ -19,10 +19,17 @@ public class SqlConnection {
     int tdnum;
     String filepath;  //文件夹路径
     String daname;   //创建的数据库名
+    PreparedStatement pst = null;
     Connection conn = null;       //连接
     Statement stmt = null;
-    public void TheSqlConnection()
+    String searsql = new String();
+    String datime = new String();
+    String shiyanx[];
+    ResultSet rs;
+    public String[] TheSqlConnection(String s)
     {
+        shiyanx = new String[8];  //存储实验信息
+        datime = s;  //获取实验时间进行试验信息查询
         //1.加载驱动
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -34,7 +41,7 @@ public class SqlConnection {
 
         try {
             conn = DriverManager.getConnection(URL, NAME, PASSWORD);
-            System.out.println("获取数据库连接成功！");
+          //  System.out.println("获取数据库连接成功！");
             /*stmt = conn.createStatement();
                       if(0 == stmt.executeLargeUpdate(creatsql))
                           {
@@ -53,6 +60,47 @@ public class SqlConnection {
             //添加一个println，如果连接失败，检查连接字符串或者登录名以及密码是否错误
             e.printStackTrace();
         }
+        //初始化数据库查找
+        searsql = "select * from message where s_time='"+datime+"';";
+        try{
+            pst = (PreparedStatement) conn.prepareStatement(searsql);
+             rs = pst.executeQuery();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        try {
+            if(rs.next())
+            {
+                for(int i=0;i<7;i++)
+                    shiyanx[i] = rs.getString(i+1);
+                shiyanx[7] = String.valueOf(rs.getInt(8));
+            }
+            else
+                System.out.println("rs is null in the Sqlconne 81");
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if(conn!=null)
+        {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                conn=null;
+            }
+        }
+        try {
+            rs.close();
+            pst.close();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return shiyanx;
+    }
+   /* public void finish(){
         //数据库打开后就要关闭
         if(conn!=null)
         {
@@ -64,8 +112,16 @@ public class SqlConnection {
                 conn=null;
             }
         }
-    }
+        try {
+            rs.close();
+            pst.close();
 
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+*/
     public void creatmessage(){
          String creatsql = "CREATE TABLE message("
                     + "s_time varchar(50) not null,"

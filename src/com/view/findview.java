@@ -1,4 +1,6 @@
 package com.view;
+import com.model.SqlConnection;
+
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.JRadioButton;
@@ -12,6 +14,9 @@ import java.io.File;
 import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.MouseAdapter;
+import java.sql.ResultSet;
+import com.control.findviewEvent;
+import com.control.tuxingEvent;
 public class findview extends JFrame {
     JPanel mainpanel = new JPanel();   //主界面和layout
     BorderLayout mainlayout = new BorderLayout();
@@ -30,13 +35,26 @@ public class findview extends JFrame {
     List<String> needfilename=new ArrayList<String>();//查到的文件名
     JPanel dnpanel = new JPanel();  //显示数据的界面
     JScrollPane tpanel = new JScrollPane();
+    String date = new String();
     String choose = new String();  //选择的时间
     JTable datable;
+    findviewEvent findviewevent = new findviewEvent();
+    String datime = new String();  //实验时间用于在mysql查询数据
+    String shiyanxinxi[];   //存入时间信息
+    JPanel[] tuxiangpanel;
+    JPanel TXpanel = new JPanel();  //图像+控制条的和用panel
+    JPanel TXzpanel = new JPanel(); //图像的总panel ，加入图像
+    CardLayout TXzlayout = new CardLayout();  //布局
+    Object queryd[][];   //存储数组
+    JPanel control = new JPanel();  //条的panel
+    tuxingEvent tuxevent ;  //条事件监听
+    int tdnum ;  //获取通道数量
    // JTable block = new JTable(); //定义table
     public void mainpanelinit(){
         mainpanel.setLayout(mainlayout);
        daviewini();
         xinxiinit();
+        TXinit();
 
       //  tpanel.setVisible(true);
      //   mainpanel.add(tpanel,BorderLayout.CENTER);
@@ -52,6 +70,33 @@ public class findview extends JFrame {
         tpanel = new JScrollPane(datable);
         dapanel.add(tpanel,"dateview");
         mainpanel.add(dapanel);
+    }
+    /*
+    * 图像界面初始化
+    * */
+    public void TXinit(){
+        //放图像界面初始化
+             TXzpanel = new JPanel();
+             TXzpanel.setLayout(TXzlayout);
+             TXzpanel.setVisible(true);
+            // TXzpanel.setBackground(Color.BLACK);
+             //放控制条 图像界面初始化
+             TXpanel = new JPanel();
+             TXpanel.setLayout(new BorderLayout());
+             //条初始化
+             control = new JPanel();
+             control.setPreferredSize(new Dimension(TXpanel.getWidth(),30));
+             control.setBackground(Color.GRAY);
+             //加入两个界面
+        TXpanel.add(control,BorderLayout.NORTH);
+        TXpanel.add(TXzpanel,BorderLayout.CENTER);
+        dapanel.add(TXpanel,"tuxiang");
+    }
+    /*
+    * 转换data界面
+    * */
+    public void changedataview(String str){
+        dalayout.show(dapanel,str);  //转换界面
     }
     /*
     * 信息界面初始化
@@ -98,11 +143,12 @@ public class findview extends JFrame {
                     //得到选中的单元格的值，表格中都是字符串
 
                     Object value= block.getValueAt(r, c);
-
                     String info=value.toString();
                     choose = info;
-                    System.out.println(info);
+                   // System.out.println(info);
+                    searchxinxi();  //查询实验信息
                     creattable();  //创建表格
+                    //flushtuxiang();//  刷新图像
                   /*  if(tpanel==null)
                         System.out.println("null");*/
 
@@ -125,6 +171,30 @@ public class findview extends JFrame {
     * 实验信息的表格初始化
     * */
     public void tableini(){
+        //定义三个选择框
+        findviewevent = new findviewEvent();
+        findviewevent.setTnum(tdnum);  //传入通道数量
+        findviewevent.setFind(this);
+        ButtonGroup group = new ButtonGroup();
+        JRadioButton radio2 = new JRadioButton("查看历史");
+        JRadioButton radio1 = new JRadioButton("实验信息");
+        JRadioButton radio3 = new JRadioButton("折线图");
+        radio1.setBackground(Color.lightGray);
+        radio2.setBackground(Color.lightGray);
+        radio3.setBackground(Color.lightGray);
+        radio1.setActionCommand("1");
+        radio2.setActionCommand("2");
+        radio3.setActionCommand("3");
+        group.add(radio1);
+        group.add(radio2);
+        group.add(radio3);
+        radio1.addActionListener(findviewevent);
+        radio2.addActionListener(findviewevent);
+        radio3.addActionListener(findviewevent);
+        search.add(radio1);
+        search.add(radio2);
+        search.add(radio3);
+
        block = new JTable(25,1){
            public boolean isCellEditable(int row, int column) {return false;};  //表格重写 实现可以选中的功能
        };
@@ -140,13 +210,7 @@ public class findview extends JFrame {
         search.setPreferredSize(new Dimension(260,600));  //设定装入JScrollpan大小
         search.add(tablepanel);
         Cpanel.add(search,"block");  //加入cardpanel
-        /*
-        * 加入；两个button
-        * */
-        JButton yes = new JButton("确定");
-        JButton no = new JButton("取消");
-        search.add(yes);
-        search.add(no);
+
     }
      /*
      * 获取需要文件夹的名字
@@ -188,27 +252,50 @@ public class findview extends JFrame {
      * 更新数据到信息table
      * */
      public void flusht(){
-         Vector vData = new Vector();
-         Vector<String> vName = new Vector<String>();
+        Vector vData = new Vector();
+         Vector<String> vName = new Vector();
          vName.add("时间");   //列名称
          Vector vRow = new Vector();
          int n = needfilename.size();
          for(int i=0;i<n;i++)
          {
+             vRow = new Vector();
              vRow.add(needfilename.get(i));
+            // System.out.println(needfilename.get(i)+"206");
+            // System.out.println(vRow.get(0));
              vData.add(vRow);
          }
+     /*  Object[]tablename = {"时间"};
+       Object[] filname = new Object[needfilename.size()];
+       for(int i=0;i<needfilename.size();i++)
+           filname[i] = needfilename.get(i);*/
 
-         DefaultTableModel model = new DefaultTableModel(vData, vName);
-         block.setModel(model);
+         DefaultTableModel m = new DefaultTableModel(vData,vName);
+         block.setModel(m);
      }
-     //创建table 用于刷新数据
+     /*
+     * 查询mysql中的文件，查询实验信息，主要用于之后的查询以及显示实验信息
+     * */
+     public void searchxinxi(){
+         datime = choose;
+         SqlConnection seach = new SqlConnection();
+         shiyanxinxi = new String[8];  //存入实验信息 分别是时间、名称、备注、地点、温度、湿度、气体、 实验数量是固定
+         shiyanxinxi =seach.TheSqlConnection(datime);
+         //获取实验信息
+       // System.out.println(shiyanxinxi[7]);
+         tdnum = Integer.parseInt(shiyanxinxi[7]);
+
+     }
+     //创建数字table 用于刷新数据
        public void creattable(){
            EventQueue.invokeLater(new Runnable() {
                public void run() {
                    try {
                        long startTime=System.currentTimeMillis();
-                       table tb = new table();
+                     table  tb = new table();  //获取数 和列的名字
+                       tb.setTnum(tdnum); //放入通道数量
+                       tb.setChoose(datime);  //传送实验时间
+                       tb.init();  // 数据和列名字初始化
                        //dnpanel = tb.getContentPane();
                        //定义table
                        DefaultTableModel tableModel=new DefaultTableModel(tb.queryData(),tb.getHead()){
@@ -218,6 +305,10 @@ public class findview extends JFrame {
                            }
                        };
                        datable.setModel(tableModel);  //刷新数据
+                      // queryd = new Object[tb.queryData().length][tdnum+1];
+                       queryd = tb.queryData();  //获取数据 每一列是需要的数据
+                       tb.finish();
+                       flushtuxiang();
                        //mainpanel.add(tpanel,BorderLayout.CENTER);
                       // frame.setVisible(true);
                        long endTime=System.currentTimeMillis();
@@ -227,6 +318,43 @@ public class findview extends JFrame {
                    }
                }
            });
+          // queryd = tb.queryData();  //获取数据 每一列是需要的数据
+
+       }
+       /*
+       * 设定图像
+       * */
+       public void flushtuxiang(){
+           control.removeAll();  //条清除控件
+           //加控制条
+           ButtonGroup group = new ButtonGroup();
+           tuxevent = new tuxingEvent(); //创建事件监听
+           tuxevent.setFind(this);  //chuandicituxiang
+           for(int i=0;i<tdnum;i++)
+           {
+               JRadioButton radio = new JRadioButton("通道"+String.valueOf(i+1)); //设定按钮
+               radio.setBackground(Color.GRAY);
+               radio.setActionCommand(Integer.toString(i+1));  //设定标记
+               radio.addActionListener(tuxevent);  //事件监听
+               group.add(radio);
+               control.add(radio);
+           }
+           chartinit chartview = new chartinit();
+           chartview.init(tdnum,queryd);
+          /* TXzpanel = chartview.getTuxiangpanel();  //huoqu panel
+           TXzlayout = chartview.getTuxianglayout(); //获取布局
+           TXpanel.updateUI();*/
+          TXzpanel.removeAll();  //移除全部组件
+          tuxiangpanel = chartview.getPanel();  //获取panel
+          for(int i=0;i<tuxiangpanel.length;i++)
+          {
+              TXzpanel.add(tuxiangpanel[i],Integer.toString(i+1));
+          }
+          // JPanel panel = chartview.getPanel();
+          // dapanel.add(panel,"chart");
+       }
+       public void changetuxiang(String s){   //换tuxiang
+           TXzlayout.show(TXzpanel,s);
        }
     /*
      * initTfDate 初始化JFormattedTextField tfDate;
@@ -247,6 +375,7 @@ public class findview extends JFrame {
                 mDateChooser.showDateChooser(p);
                 tfDate.requestFocusInWindow();
                 String s = tfDate.getText();  //获取时间
+                date = s;
                 getfineme(s);
                // System.out.println(s);
             }

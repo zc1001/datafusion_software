@@ -3,8 +3,9 @@ package com.model;
 
 public class User {
     private int td1,td2,td3,td4,td5,td6,td7;
-
-
+    int tnum = 0;  //通道数
+    int num[];
+    Object NUM2[];
     public int getTd1() {
         return td1;
     }
@@ -46,6 +47,21 @@ public class User {
     }
     public void setTd7(int t){
         this.td7 = t;
+    }
+
+    public void setNum(int[] a){
+        num = a;
+        for(int i=0;i<tnum+1;i++)
+            NUM2[i] = (Object)num[i];
+    }
+    public Object[] getNum(){
+        return  NUM2;
+    }
+
+    public void setTnum(int i){
+        tnum = i;
+        num = new int[tnum+1]; //数组定义
+        NUM2 = new Object[tnum+1];  //数组定义
     }
 
 

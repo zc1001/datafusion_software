@@ -14,11 +14,19 @@ public class table extends JFrame {
     private String head[]=null;
     private Object [][]data=null;
     private UserDao user=new UserDao();
-   public table(){
-       head=new String[] {
-               "td1", "td2", "td3", "td4", "td5", "td6", "7",
-       };
-   }
+    String choose = new String();  //表格的时间
+    int tnum=0 ; //通道数量
+
+     public void init(){
+       //初始化每一行的名字
+       head = new String[tnum+1];
+       head[0] = "实验次数";
+       for(int i=1;i<=tnum;i++){
+           head[i] = "通道"+String.valueOf(i+1);
+       }
+       user.setChoose(choose);  //传送实验时间
+       user.setTnum(tnum);
+     }
 
   /*  *//*
     * 初始化
@@ -97,17 +105,18 @@ public class table extends JFrame {
      */
     public Object[][] queryData(){
         List<User> list=user.queryAllUser();
-        data=new Object[list.size()][head.length];
-        System.out.println(list.size());
+        data=new Object[list.size()][head.length+1];
+       // System.out.println(list.size());
         for(int i=0;i<list.size();i++){
 
-            data[i][0]=list.get(i).getTd1();
+            /*data[i][0]=list.get(i).getTd1();
             data[i][1]=list.get(i).getTd2();
             data[i][2]=list.get(i).getTd3();
             data[i][3]=list.get(i).getTd4();
             data[i][4]=list.get(i).getTd5();
             data[i][5]=list.get(i).getTd6();
-            data[i][6]=list.get(i).getTd7();
+            data[i][6]=list.get(i).getTd7();*/
+            data[i] = list.get(i).getNum();
 
         }
         list.clear(); //清楚list空间
@@ -118,5 +127,15 @@ public class table extends JFrame {
     public String[] getHead() {
 
         return head;
+    }
+    public void finish(){
+        user.finish();
+    }
+    public void setTnum(int i){
+        tnum = i;
+    }
+
+    public void setChoose(String s){
+        choose = s;  //传送实验时间
     }
 }
