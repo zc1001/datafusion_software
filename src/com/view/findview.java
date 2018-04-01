@@ -17,6 +17,8 @@ import java.awt.event.MouseAdapter;
 import java.sql.ResultSet;
 import com.control.findviewEvent;
 import com.control.tuxingEvent;
+import com.control.exporEvent;
+import com.control.xainshiwait;
 public class findview extends JFrame {
     JPanel mainpanel = new JPanel();   //主界面和layout
     BorderLayout mainlayout = new BorderLayout();
@@ -26,11 +28,13 @@ public class findview extends JFrame {
     JPanel xinxipanel = new JPanel();
     CardLayout cardlayout = new CardLayout();  //cardpanel 定义
     JPanel Cpanel = new JPanel(cardlayout);
+    CardLayout C_tablelayout = new CardLayout(); //定义 查看实验信息的界面
+    JPanel C_tablepanel = new JPanel(C_tablelayout);  //实验信息界面
     JPanel search = new JPanel();  //查询的panel
     CardLayout dalayout = new CardLayout();  //cardpanel 定义  查看数据的界面
     JPanel dapanel = new JPanel(dalayout);   //查看数据的界面
     JScrollPane tablepanel;
-    JTable block;           //定义Jtable 包括初始 之后加入数据
+     JTable block;           //定义Jtable 包括初始 之后加入数据
     List<String> fname=new ArrayList<String>();   //所有文件名
     List<String> needfilename=new ArrayList<String>();//查到的文件名
     JPanel dnpanel = new JPanel();  //显示数据的界面
@@ -40,7 +44,7 @@ public class findview extends JFrame {
     JTable datable;
     findviewEvent findviewevent = new findviewEvent();
     String datime = new String();  //实验时间用于在mysql查询数据
-    String shiyanxinxi[];   //存入时间信息
+   public String shiyanxinxi[];   //存入实验信息
     JPanel[] tuxiangpanel;
     JPanel TXpanel = new JPanel();  //图像+控制条的和用panel
     JPanel TXzpanel = new JPanel(); //图像的总panel ，加入图像
@@ -49,9 +53,12 @@ public class findview extends JFrame {
     JPanel control = new JPanel();  //条的panel
     tuxingEvent tuxevent ;  //条事件监听
     int tdnum ;  //获取通道数量
+    xainshiwait wait = new xainshiwait(); //定义等待
+    find_xinxiview Fxinxiview = new find_xinxiview();   //查看信息的界面
    // JTable block = new JTable(); //定义table
     public void mainpanelinit(){
         mainpanel.setLayout(mainlayout);
+        wait.setFind(this);  //传入find
        daviewini();
         xinxiinit();
         TXinit();
@@ -146,8 +153,13 @@ public class findview extends JFrame {
                     String info=value.toString();
                     choose = info;
                    // System.out.println(info);
-                    searchxinxi();  //查询实验信息
-                    creattable();  //创建表格
+                    //searchxinxi();  //查询实验信息
+                    wait.init();//创建表格 等待开始
+                    //创建查看实验信息的界面
+                    find_ixnxiview();
+
+
+                    //creattable();  //创建表格
                     //flushtuxiang();//  刷新图像
                   /*  if(tpanel==null)
                         System.out.println("null");*/
@@ -168,11 +180,23 @@ public class findview extends JFrame {
 
     }
     /*
+    * 创建查看信息的界面
+    * */
+    public void find_ixnxiview(){
+        Fxinxiview.setXinxi(shiyanxinxi);  //传入实验信息
+       Fxinxiview.init();
+       JPanel Csec_panel = Fxinxiview.getPanel();
+       C_tablepanel.add(Csec_panel,"sec");
+
+    }
+    /*
     * 实验信息的表格初始化
     * */
     public void tableini(){
         //定义三个选择框
         findviewevent = new findviewEvent();
+        exporEvent exporevent = new exporEvent();
+        exporevent.setTable(datable);
         findviewevent.setTnum(tdnum);  //传入通道数量
         findviewevent.setFind(this);
         ButtonGroup group = new ButtonGroup();
@@ -206,10 +230,17 @@ public class findview extends JFrame {
         block.getColumnModel().getColumn(0).setHeaderValue("实验时间");
         JScrollPane tablepanel = new JScrollPane (block);
         tablepanel.setPreferredSize(new Dimension(260,500));  //设定JScrollpan 大小  主要是放入table
-        search.setBackground(Color.lightGray);  //
+        C_tablepanel.add(tablepanel,"first");  //把 tablepanel 变成cardpanel
+        C_tablelayout.first(C_tablepanel);
+        search.setBackground(Color.lightGray);
         search.setPreferredSize(new Dimension(260,600));  //设定装入JScrollpan大小
-        search.add(tablepanel);
+        search.add(C_tablepanel);  //加入Card layout  panel
         Cpanel.add(search,"block");  //加入cardpanel
+
+        JButton exp = new JButton("导出Excel");
+        exp.setActionCommand("exp");
+        exp.addActionListener(exporevent);
+        search.add(exp);
 
     }
      /*
@@ -308,7 +339,12 @@ public class findview extends JFrame {
                       // queryd = new Object[tb.queryData().length][tdnum+1];
                        queryd = tb.queryData();  //获取数据 每一列是需要的数据
                        tb.finish();
-                       flushtuxiang();
+                       Thread t = new Thread(new Runnable(){
+                           public void run(){
+                               flushtuxiang();
+                           }});
+                       t.start();
+
                        //mainpanel.add(tpanel,BorderLayout.CENTER);
                       // frame.setVisible(true);
                        long endTime=System.currentTimeMillis();
@@ -380,6 +416,7 @@ public class findview extends JFrame {
                // System.out.println(s);
             }
 
+
             public void mouseEntered(MouseEvent mouseevent) {
 // TODO Auto-generated method stub
             }
@@ -400,6 +437,9 @@ public class findview extends JFrame {
 
     /*返回 mainpanel
     * */
-
+    /*cpanel 信息界面转换
+    * */
+    public void Cpaenl_changesec(){C_tablelayout.previous(C_tablepanel);} //查看实验信息的界面 转换
+    public void Cpanel_changefir(){C_tablelayout.first(C_tablepanel);}  //转换回之前的界面
     public JPanel getMainpanel() { return mainpanel; }
 }

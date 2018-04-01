@@ -3,7 +3,9 @@ package com;
 import com.view.*;
 import com.model.SqlConnection;
 import java.io.File;
-import java.io.IOException;
+
+
+
 public class Main {
 public static boolean ifnew = false;
 public static boolean ifallo = false;
@@ -14,6 +16,7 @@ public static boolean ifallo = false;
         {
             file.mkdir();
         }
+
         //创建信息表 初始化
         SqlConnection csql = new SqlConnection();
         csql.creatmessage();

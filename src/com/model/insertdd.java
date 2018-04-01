@@ -37,13 +37,15 @@ public class insertdd {
         * 初始化
         * */
       try{
+        //  InputStreamReader reader = new InputStreamReader(new FileInputStream(file));
           for(int i=0;i<tnum;i++)
           {
               tpath = fpath+"\\"+Integer.toString(i+1)+"通道.txt";
               file = new File(tpath);
               if (file.isFile()&&file.exists()){
-                  InputStreamReader reader = new InputStreamReader(new FileInputStream(file));
+                  InputStreamReader  reader = new InputStreamReader(new FileInputStream(file));
                   br[i] = new BufferedReader(reader);
+                 // reader.close();  //关闭资源
               }
           }
       }catch (Exception e){
@@ -116,6 +118,7 @@ public class insertdd {
           if(pstm!=null){
               try {
                   pstm.close();
+
                   } catch (SQLException e) {
                   e.printStackTrace();
                   throw new RuntimeException(e);
@@ -132,6 +135,13 @@ public class insertdd {
                    }
         long endTime=System.currentTimeMillis();
         System.out.println("程序运行时间： "+(endTime-startTime)+"ms");
+        //关闭输入流
+        try{
+            for(int i=0;i<tnum;i++)
+                br[i].close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
 
     }

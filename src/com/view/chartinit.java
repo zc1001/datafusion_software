@@ -2,11 +2,14 @@ package com.view;
 import com.steema.teechart.TChart;
 import com.steema.teechart.Zoom;
 import com.steema.teechart.ZoomDirections;
+import com.steema.teechart.styles.FastLine;
 import com.steema.teechart.styles.Line;
 import javax.swing.JPanel;
 import javax.swing.*;
 import java.awt.*;
-
+/*
+* 创建图像的
+* */
 public class chartinit extends JFrame{
    int tnum;
    JPanel panel[];
@@ -21,7 +24,7 @@ public class chartinit extends JFrame{
        for (int i=0;i<tnum;i++)
            chart[i] = new TChart();
        for(int i=0;i<tnum;i++){
-           chart[i].addSeries(new Line());
+           chart[i].addSeries(new FastLine());
        }
     //   System.out.println(tnum);
            //开线程
