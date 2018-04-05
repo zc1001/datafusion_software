@@ -47,12 +47,15 @@ public class MenuBarEvent extends JFrame implements ActionListener,Runnable{
              allocationview allo = new allocationview();
             allo.setAPPmain(j);
              allo.init();
+             //在allocationview中设定可见性
+            // j.changebuttonvisauble(new int[]{1,2,3});
 
         }
         if (e.getActionCommand().equals("saw_new") || EventName.equals("saw_new")){
           newview newvie = new newview();
           newvie.setAPPmain(j);
           newvie.init();
+          //newview中设定可使用性
 
         }
         if (e.getActionCommand().equals("saw_about") || EventName.equals("saw_about")){
@@ -65,6 +68,7 @@ public class MenuBarEvent extends JFrame implements ActionListener,Runnable{
             });
         }
         if(e.getActionCommand().equals("saw_start") || EventName.equals("saw_start")){
+          j.changebuttonvisauble(new int[]{});  //全部按钮可用
            //创建当前数据文件夹
             Date date = new Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_ddHH_mm_ss");  //设置要获取到什么样的时间
@@ -87,6 +91,7 @@ public class MenuBarEvent extends JFrame implements ActionListener,Runnable{
 
         }
         if(e.getActionCommand().equals("saw_end") || EventName.equals("saw_end")){
+            j.changebuttonvisauble(new int[]{1,2});  //开始，暂停键不可用
             System.out.println("ok");
             cRead.finish();   //结束进程、关闭串口
             tdnum = Integer.parseInt(j.getSnum());  //得到通道数量

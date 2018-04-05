@@ -126,11 +126,11 @@ public class findview extends JFrame {
         JLabel chaxun = new JLabel("请选择实验时间");
        // chaxun.setBounds(15, 60, 80, 30);
         initTfDate();//初始化 文本框
-        JLabel bl = new JLabel("                                                                                     ");
-        xinxipanel.add(bl);
+       /* JLabel bl = new JLabel("                                                                                     ");
+        xinxipanel.add(bl);*/
         xinxipanel.add(chaxun);
         xinxipanel.add(tfDate);
-        xinxipanel.add(bl);
+       ///xinxipanel.add(bl);
         xinxipanel.add(Cpanel);  //加入cardpanel
         Cpanel.setPreferredSize(new Dimension(260,600));//设定cpanel大小
         Cpanel.setBackground(Color.lightGray);
@@ -222,6 +222,7 @@ public class findview extends JFrame {
        block = new JTable(25,1){
            public boolean isCellEditable(int row, int column) {return false;};  //表格重写 实现可以选中的功能
        };
+      // block.setBackground(Color.lightGray);
       block.setPreferredSize(new Dimension(300,700));  //sheding
       //  block.getTableHeader().setVisible(false);
 

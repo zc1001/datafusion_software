@@ -26,6 +26,7 @@ public class allocationview extends JFrame  implements ActionListener,ItemListen
 
     public void init(){
         view();
+        d.setBackground(Color.lightGray);
         d.setVisible(true);
     }
     public void setAPPmain(AppMain apPmain){
@@ -61,20 +62,21 @@ public class allocationview extends JFrame  implements ActionListener,ItemListen
 
          /*
          * 选择串口*/
-         c.add(new JLabel("请选择串口                    "));
+
+         c.add(new JLabel("      请选择串口数量"));
          comBox = new JComboBox();
          comBox.addItem("        ");
          comBox.addItem("  COM1  ");
          comBox.addItem("  COM2  ");
          comBox.addItemListener(this);
          c.add(comBox);
-
+         c.add(new JLabel("   "));
 
          /*
          选择通道
          * */
-         c.add(new JLabel("请输入通道数            "));
-         num = new JTextField(8);
+         c.add(new JLabel("    请输入通道数量"));
+         num = new JTextField(12);
         /* num.getDocument().addDocumentListener(new DocumentListener(){
                                                    public void changedUpdate(DocumentEvent e) {//这是更改操作的处理
                                                         snum = num.getText().trim();//trim()方法用于去掉你可能误输入的空格号
@@ -88,11 +90,11 @@ public class allocationview extends JFrame  implements ActionListener,ItemListen
                                                }
          );*/
          c.add(num);
-
+         c.add(new JLabel("    "));
 
          /* 选择频率
          * */
-         c.add(new JLabel("         请选择抽样频率          "));
+         c.add(new JLabel("    请选择抽样频率"));
          comBox2 = new JComboBox();
          comBox2.addItem("       ");
          comBox2.addItem("  1.0  ");
@@ -101,12 +103,13 @@ public class allocationview extends JFrame  implements ActionListener,ItemListen
          comBox2.addItem("  2.5  ");
          comBox2.addItemListener(this);
          c.add(comBox2);
+         c.add(new JLabel("  "));
 
 
          /*
          button  确定 取消
          * */
-         c.add(new JLabel("       "));
+
          button_yes = new JButton("确定");
          button_no = new JButton("取消");
          button_yes.setActionCommand("yes");
@@ -149,8 +152,9 @@ public class allocationview extends JFrame  implements ActionListener,ItemListen
          j.setS_com(s_com);
          j.setS_pinlv(s_pinlv);
          j.setSnum(snum);
-         Main.ifallo = true;
+        // Main.ifallo = true;
          d.setVisible(false);
+          j.changebuttonvisauble(new int[]{1,2,3}); //重新设定可见性
 
      }
      if(e.getActionCommand().equals("no")){

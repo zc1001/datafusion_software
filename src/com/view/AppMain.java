@@ -2,6 +2,7 @@ package com.view;
 import com.Main;
 import com.control.MenuBarEvent;
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,6 +27,7 @@ public class AppMain extends JFrame {
     int tdnum;    //定义通道数量
     JFSwingDynamicChart Jchart ;
     JPanel xinxipanel ;  //查看实验信息的界面
+    JButton[] jb = new JButton[7];  //tollbar 中的按钮 在这里定义 是为了进行之后更改权限
 
    public void APPinit(){
        try {
@@ -129,15 +131,16 @@ public class AppMain extends JFrame {
      * */
       public void changeview(){
           cardpanel_secinit();
-          card.previous(Cpanel);
+          //card.previous(Cpanel);
+          card.show(Cpanel,"datapanel");
       }
       /*
       * 使用此函数返回主界面，并实现数据重置
       * */
       public void changeviewfirst(){
           card.first(Cpanel);
-          Main.ifallo = false;
-          Main.ifnew = false;
+          //Main.ifallo = false;
+          //Main.ifnew = false;
       }
     /*
      Menu bar
@@ -249,14 +252,16 @@ public class AppMain extends JFrame {
         String ComandString[] = { "saw_new", "saw_start", "saw_suspend", "saw_end","saw_allocation" ,"saw_find", "saw_exit"};
         //
         for (int i = 0; i < ComandString.length; i++) {
-            JButton jb = new JButton();
+           jb[i] = new JButton();
             ImageIcon image = new ImageIcon(this.getClass().getResource("/picture/" + ImageName[i]));
-            jb.setIcon(image);
-            jb.setToolTipText(TipString[i]);
-            jb.setActionCommand(ComandString[i]);
-            jb.addActionListener(_MenuBarEvent);
-            jToolBarMain.add(jb);
+            jb[i].setIcon(image);
+            jb[i].setToolTipText(TipString[i]);
+            jb[i].setActionCommand(ComandString[i]);
+            jb[i].addActionListener(_MenuBarEvent);
+            jToolBarMain.add(jb[i]);
         }
+        //设定哪些 按钮不可使用
+        changebuttonvisauble(new int[]{0,1,2,3});
     }
 
     /*
@@ -307,5 +312,29 @@ public class AppMain extends JFrame {
     public String getS_com(){ return s_com ;}
     public String getS_pinlv(){return s_pinlv ;}
     public String getSnum(){ return snum; }
+     /*
+     * 设置哪些按钮可见那些不可见
+     * */
+     public void changebuttonvisauble(int arr[]){
+         if(arr == null){  //这些按钮都用
+             for(int i=0;i<7;i++){
+                 jb[i].setEnabled(true);
+             }
+         }
+         else {
+             for(int i=0;i<7;i++){
+                 boolean f = true;
+                 //判断哪些按钮可见
+                 for(int j=0;j<arr.length;j++){
+                     //此按钮是不可使用
+                     if(i == arr[j]){
+                         f = false;
+                         break;
+                     }
+                 }
+                 jb[i].setEnabled(f);
+             }
+         }
 
+     }
 }

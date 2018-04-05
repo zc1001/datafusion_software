@@ -27,6 +27,7 @@ public class newview extends JFrame implements ActionListener {
     public void init(){
       view();
         d.setVisible(true);
+        d.setBackground(Color.lightGray);
     }
 
     private void view(){
@@ -34,7 +35,7 @@ public class newview extends JFrame implements ActionListener {
         f = panel.getframe();
         d = new JDialog(f,"新建实验",true);
         Container c = d.getContentPane();
-        d.setSize(350,400);
+        d.setSize(350,600);
         FlowLayout fay = new FlowLayout(FlowLayout.CENTER);  //控件居中
         fay.setHgap(25);  //组件行间距
         fay.setVgap(10);  //组件纵向间距
@@ -76,19 +77,19 @@ public class newview extends JFrame implements ActionListener {
         area_shi.setWrapStyleWord(true);
         c.add(new JScrollPane(area_shi));
 
-        c.add(new JLabel("实验气体"));
+        c.add(new JLabel("  实验气体"));
         area_gas = new JTextArea(3,20);
         area_gas.setLineWrap(true);
         area_gas.setWrapStyleWord(true);
         c.add(new JScrollPane(area_gas));
 
-        c.add(new JLabel(" 备注 "));
+        c.add(new JLabel("        备注"));
         other = new JTextArea(3,20);
         other.setLineWrap(true);
         other.setWrapStyleWord(true);
         c.add(new JScrollPane(other));
 
-        c.add(new JLabel("       "));
+        c.add(new JLabel(" "));
         button_yes = new JButton("确定");
         button_no = new JButton("取消");
         button_yes.setActionCommand("yes");
@@ -146,6 +147,7 @@ public class newview extends JFrame implements ActionListener {
             Main.ifnew = true;
             d.setVisible(false);
             dataviewstart();
+            j.changebuttonvisauble(new int[]{2,3});  //重新设定可使用部分 按钮暂定 结束不可用
 
         }
         if(e.getActionCommand().equals("no")){
@@ -156,11 +158,9 @@ public class newview extends JFrame implements ActionListener {
         j = appmain;
     }
     public void dataviewstart(){
-        if(Main.ifallo == true)
-        {
             System.out.println("实验创建OK，from newview");
             j.changeview();
-        }
+
         /*
         * 要加else语句 如果没有写之前的配置不能开始创建实验
         * */
