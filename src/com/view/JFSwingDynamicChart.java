@@ -15,6 +15,7 @@ import org.jfree.chart.axis.DateTickUnit;
 import java.text.SimpleDateFormat;
 import javax.swing.*;
 import java.awt.*;
+import java.util.Date;
 
 /*
 * 实现数据的曲线显示
@@ -105,7 +106,7 @@ public class JFSwingDynamicChart extends JFrame  {
         /*
         * 设定纵坐标
         * */
-        axis.setRange(0.0, 300.0);
+        //axis.setRange(0.0, 300.0);
         return result;
     }
 
@@ -138,6 +139,9 @@ public class JFSwingDynamicChart extends JFrame  {
          * 设定一个set函数，接收数字并显示
          * */
             series.addOrUpdate(new Millisecond(),a);
+
+           // System.out.println(now);
+
 
 
 

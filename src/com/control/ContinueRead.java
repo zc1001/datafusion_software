@@ -39,8 +39,11 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
   // FileWriter fw;
     File file[] ;
     int num = 5;
-    int tdn = 7;
+    int tdn = 9;
     int k;   //用于double 和int转化
+    int bytelenth = 232; //有效数据字节数组的长度,加上温度湿度
+    int bytenum = 29;  //数据包有效数字数量
+    int allbytelenth = 237; //总共的长度数据包
     FileWriter fw;
     BufferedWriter bw;
     public volatile boolean exit = false;   //判断进程是否停止
@@ -62,25 +65,66 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
             case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
                 break;
             case SerialPortEvent.DATA_AVAILABLE:// 当有可用数据时读取数据
-                 readBuffer = new byte[50];
+                 readBuffer = new byte[1000];
                 try {
                     numBytes = -1;
                   //   fw = new FileWriter("D:\\saw_data\\2018-03-03 14-51-36\\通道.txt");
-                    b =new double[20];
-                    while (inputStream.available() > 0) {
+                  //  b =new double[20];
+                    while (inputStream.available() >=allbytelenth ) { //当数据大于237 的时候 大于总长度可以输出
                         numBytes = inputStream.read(readBuffer);
-                       if(numBytes>0)
+                        int loc = 0;
+                       while(loc<numBytes)
                        {
+                           /*此部分未做一组数组可能接受两组或以上数据的情况，可以吧上面的if改成while*/
                            //输出得到的数据
                            //System.out.println(numBytes);
-                           String d =new String();
-                           for(int i=0;i<numBytes;i++)
+                          // String d =new String();
+                           /*开始进行数据包确定*/
+                           while((readBuffer[loc]!='$'||readBuffer[loc+1]!='$')&&loc<numBytes)
                            {
-                               d+=String.valueOf(readBuffer[i]);
-                            Queue.add((double)(readBuffer[i] - 48));//数字进入队列
-                              // store((int)(readBuffer[i]-48));
-                              // System.out.println((double) (readBuffer[i]-48)); //转换成double
+                               loc++;
                            }
+                           if(numBytes<loc)
+                               break;
+                           if(loc+allbytelenth>numBytes)
+                               break; //丢弃数据 此部分数据为送入数组但是没有完整送入的数据，丢弃
+                         //  System.out.println("数据包头位置"+loc+"  "+"包头："+readBuffer[loc]+"   "+readBuffer[loc+1]+"第86行");
+                         /*  if(loc>=numBytes)
+                               continue;  //如果缓冲区没有数字 退出本次循环*/
+                           /*开始数据校验*/
+                           int youxiaoloc = loc+2; //现在定位是第一个有效字节
+                           byte JYresult = readBuffer[youxiaoloc]; //校验结果；
+                           //异或校验
+                           for (int i = 0; i <bytelenth-1; i++) {
+                               JYresult ^=readBuffer[youxiaoloc+i+1];
+                           }
+                           if(readBuffer[loc+bytelenth+2]==JYresult){  //判断是否校验错误
+                               //数据校验正确
+                              // for(int j=0;j<bytenum;j++)  //每次数据共29个数字
+                               for(int i=youxiaoloc;i<youxiaoloc+bytelenth;i+=8)
+                               {
+                                   // d+=String.valueOf(readBuffer[i]);
+                                   // System.out.println("80  "+ readBuffer[i]);   //测试
+                                   /*   转换double*/
+                                   byte[] doubltoby = new byte[8];
+                                   for(int t=0;t<8;t++){
+                                       doubltoby[t] = readBuffer[i+t];
+                                   }
+                                   Queue.add(bytes2Double(doubltoby));
+                                   //  Queue.add((double)(readBuffer[i] - 48));//数字进入队列
+                                   // store((int)(readBuffer[i]-48));
+                                   // System.out.println((double) (readBuffer[i]-48)); //转换成double
+                               }
+                           }
+                           else{
+                               System.out.println("数据校验错误114  "+"数据包数据 "+readBuffer[loc+bytelenth]+"得到校验数据："+JYresult+"第115行");
+                               System.out.println("当前定位："+loc+"    "+"收到的字节数：" + +numBytes+"第118行");
+                               for(int j=loc;j<numBytes;j++)
+                                   System.out.println(j+"     "+readBuffer[j]);
+                           }
+                           loc = loc+bytelenth+5;
+                          // System.out.println("当前定位："+loc+"    "+"收到的字节数：" + +numBytes+"第118行");
+
                         //  Queue.add(bytes2Double(readBuffer));
                            //将数据写入txt中, 数据是assic
                            /*if(file ==null)
@@ -108,7 +152,7 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
                            /*
                            *
                            * */
-                           readBuffer = new byte[50];
+                         //  readBuffer = new byte[50];
                        }
                        /* if (numBytes > 0) {
                             msgQueue.add(new Date() + "真实收到的数据为：-----"
@@ -119,6 +163,7 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
                         }*/
                     }
                 } catch (IOException e) {
+                    e.printStackTrace();
                 }
                 break;
         }
@@ -195,51 +240,109 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
         // TODO Auto-generated method stub
 
 
-           //System.out.println("--------------任务处理线程运行了--------------");
-           try {
-               while (!exit) {
-                   // 如果堵塞队列中存在数据就将其输出
-                   if (Queue.size() > 20) {
-                       String t = new String();
-                       for (int i = 0; i < 20; i++) {
+        //System.out.println("--------------任务处理线程运行了--------------");
+
+        FileWriter fww[] = new FileWriter[tdn];
+        BufferedWriter bww[] = new BufferedWriter[tdn];
+        try {
+            for (int i = 0; i < tdn; i++) {
+                fww[i] = new FileWriter(file[i], true);
+                bww[i] = new BufferedWriter(fww[i]);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        long num = 0;
+        while (!exit) {
+            // 如果堵塞队列中存在数据就将其输出
+            if (Queue.size() >= bytenum) {
+
+                      /* String t = new String();
+                       for (int i = 0; i < bytenum; i++) {
                             //  System.out.println(   Queue.peek());
                           // k = (int)(Queue.element());
                            //System.out.println(String.valueOf(Queue.element().intValue()));
                            t += String.valueOf((Queue.element()));
-                          /* t = t.substring(0,t.length() - 2);
-                           t+=" ";*/
+                        //  t  +=" ";  //空格做分
+                          *//* t = t.substring(0,t.length() - 2);
+                           t+=" ";*//*
                         //   System.out.println(t);
                          //  System.out.println(t);
                           // System.out.println(Queue.peek()+"  ");
+                          System.out.println("229 "+"第"+ i+1 +"次"+Queue.element()); //输出测试
                                Jchart[time].setNumber(Queue.remove());
 
                             // Thread.sleep(0,10);
                            TimeUnit.NANOSECONDS.sleep(1);
-                       }
-                       t+="\r\n";
+                       }*/
+                /*
+                 * 开始数据传送到每一个表格中，开始传送*/
+                for (int i = 0; i < tdn; i++) {
+                    double tdshuju[] = new double[3]; //传送数据的数组‘
+                    for (int j = 0; j < 3; j++) {
+                        //System.out.println(Queue.element());
+                        tdshuju[j] = Queue.remove();  //放入数据
+
+                    }
+                 //  System.out.println("第"+i+"通道       ");
+                    datatransport(Jchart[i], tdshuju, bww[i], fww[i]); //进行数据存储
+                }
+                Queue.remove();//温度、湿度
+                Queue.remove();
+                      /* t+="\r\n";
                        try{
                            //;
-                           fw = new FileWriter(file[time],true);//可在后面加数据不覆盖
+                        // long startTime=System.currentTimeMillis();
+                           *//*fw = new FileWriter(file[time],true);//可在后面加数据不覆盖
                            bw = new BufferedWriter (fw);
-                           bw.write(t);
+                           bw.write(t);*//*
                           // bw.newLine();
-                           bw.flush();
-                           bw.close();
+                           bww[time].write(t);
+                         *//* bw.flush();
+                           bw.close();*//*
+                 *//* long endTime=System.currentTimeMillis();
+                           System.out.println("程序运行时间： "+(endTime-startTime)+"ms");*//*
                        }catch (IOException e) {
                            // TODO Auto-generated catch block
                            e.printStackTrace();
                        }
                        //
+                      if(num>100)
+                      {
+                          Thread t1 = new Thread(new Runnable(){
+                              public void run(){
+                                //  System.out.println("test 253 read");
+                                  try{
+                                      for(int i=0;i<7;i++)
+                                      {
+                                          bww[i].flush();
+                                      }
+
+                                  }catch (Exception e){
+                                      e.printStackTrace();
+                                  }
+
+                              }
+                          });
+                          t1.start();
+                          num = 0;
+                      }
 
 
                        time++;
                        time %= 7;
+                       num++;
                    }
                }
-           }catch (InterruptedException e) {
-               // TODO Auto-generated catch block
-               e.printStackTrace();
-           }
+               for(int i=0;i<7;i++)
+                   try {
+                       bww[i].close();
+                   }catch (Exception e){
+                   e.printStackTrace();
+                   }
+*/
+
         /*} catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -250,6 +353,8 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
             Thread.sleep(1);
         } catch (InterruptedException e) {
         }*/
+            }
+        }
     }
     /*
     * 串口配置初始化
@@ -365,4 +470,36 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
             }
             return Double.longBitsToDouble(value);
         }
+
+        /*
+        * 处理传入的数据*/
+        public void datatransport(JFSwingDynamicChart Jchart,double[] data,BufferedWriter bww,FileWriter fww){
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String str = new String();  //字符串用于存储
+                    for(int i=0;i<data.length;i++){
+                    try{
+                         //  System.out.println(data[i]);
+                            Jchart.setNumber(data[i]); //传入数据
+                            Thread.sleep(15);
+                            str += data.toString();  //放入str
+                            str += " ";
+                        } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    }
+                    str += "\r\n";
+                    try{
+                        bww.write(str);
+                        bww.flush();  //刷新并关闭
+                      //  bww.close();
+                    }catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        }
+
 }

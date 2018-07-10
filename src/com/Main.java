@@ -3,6 +3,7 @@ package com;
 import com.view.*;
 import com.model.SqlConnection;
 import org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper;
+import org.jfree.data.time.Millisecond;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
@@ -15,6 +16,8 @@ public static boolean ifnew = false;
 public static boolean ifallo = false;
 public static int Ptime = 0;  //记录开始按钮的次数 大于一则表示已经开始，是暂停之后再次点击开始，不可重新连接，在结束之后可设定数量为0
     public static void main(String[] args) {
+      //  Millisecond now = new Millisecond();
+        //System.out.println(now);
         try {
             org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
             BeautyEyeLNFHelper.frameBorderStyle = BeautyEyeLNFHelper.FrameBorderStyle.translucencySmallShadow;
