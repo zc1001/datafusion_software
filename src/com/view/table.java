@@ -22,7 +22,7 @@ public class table extends JFrame {
        head = new String[tnum+1];
        head[0] = "实验次数";
        for(int i=1;i<=tnum;i++){
-           head[i] = "通道"+String.valueOf(i+1);
+           head[i] = "通道"+String.valueOf(i);
        }
        user.setChoose(choose);  //传送实验时间
        user.setTnum(tnum);

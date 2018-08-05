@@ -46,6 +46,7 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
     int allbytelenth = 237; //总共的长度数据包
     FileWriter fw;
     BufferedWriter bw;
+    dataplay dataview;
     public volatile boolean exit = false;   //判断进程是否停止
     @Override
     /**
@@ -75,6 +76,7 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
                         int loc = 0;
                        while(loc<numBytes)
                        {
+                          // System.out.println("接收字节数   "+numBytes+"第78行");
                            /*此部分未做一组数组可能接受两组或以上数据的情况，可以吧上面的if改成while*/
                            //输出得到的数据
                            //System.out.println(numBytes);
@@ -288,8 +290,22 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
                  //  System.out.println("第"+i+"通道       ");
                     datatransport(Jchart[i], tdshuju, bww[i], fww[i]); //进行数据存储
                 }
-                Queue.remove();//温度、湿度
-                Queue.remove();
+
+                try{
+                   // System.out.println("温度是 在293行 第"+num+"个    "+"：    "+Queue.element());
+                    dataview.textwendu.setText(String.valueOf(Queue.remove()));//温度
+                    // Queue.remove();//温度、湿度
+                   // System.out.println("湿度是 在296行 第"+num+"个    "+"：    "+Queue.element());
+                   // num++; //定义计数
+                    dataview.textshidu.setText(String.valueOf(Queue.remove()));  //湿度
+                    //dataview.textshidu.updateUI();  //湿度内容更新
+                    //dataview.textwendu.updateUI();    //温度内容更新
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+                //Queue.remove();
+
                       /* t+="\r\n";
                        try{
                            //;
@@ -355,6 +371,12 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
         }*/
             }
         }
+        for(int i=0;i<9;i++)
+            try {
+                bww[i].close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
     }
     /*
     * 串口配置初始化
@@ -470,6 +492,11 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
             }
             return Double.longBitsToDouble(value);
         }
+        /*
+        * 传递dataplay的界面 为了变化湿度温度 */
+        public void setDataview(dataplay a){
+            dataview = a;
+        }
 
         /*
         * 处理传入的数据*/
@@ -480,11 +507,18 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
                     String str = new String();  //字符串用于存储
                     for(int i=0;i<data.length;i++){
                     try{
+                         if(data[i]==0){
+                             str += "0.00";
+                             str +=" "; //在存储中显示没有数据，但空白数据不在图像中显示
+                             continue;  //如果是0跳过本次循环表示没有数据
+                         }
+
                          //  System.out.println(data[i]);
                             Jchart.setNumber(data[i]); //传入数据
-                            Thread.sleep(15);
-                            str += data.toString();  //放入str
+                            Thread.sleep(15);  //
+                            str += String.valueOf(data[i]);  //放入str
                             str += " ";
+                           // System.out.println("存入字符串："+str);
                         } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

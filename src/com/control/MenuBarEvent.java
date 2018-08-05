@@ -13,6 +13,7 @@ import com.view.allocationview;
 import com.view.newview;
 import com.view.JFSwingDynamicChart;
 import com.control.ContinueRead;
+import com.view.dataplay;
 
 import java.io.File;
 import java.util.Date;
@@ -33,6 +34,7 @@ public class MenuBarEvent extends JFrame implements ActionListener,Runnable{
     public void setEventName(String eventName) {
         this.EventName = eventName;
     }
+    dataplay dataview;   //接收传送数据界面，可以随时更改 传送给continue read
     /*先定义set 在APPmain中定义，传过来之后，使用本地的函数调用此函数，获取APPMain，然后处理,在函数中定义可以 OK
     * */
     public AppMain setAPP(AppMain appm){
@@ -86,6 +88,7 @@ public class MenuBarEvent extends JFrame implements ActionListener,Runnable{
            // ContinueRead cRead = new ContinueRead();          //读取串口的信息
             cRead.setFilepath(filename);
             cRead.setJchart(Jchart);
+            cRead.setDataview(dataview);  //传送dataview dataplay类型
             cRead.setFrame(frame);
              cRead.init();   //初始化
 
@@ -133,6 +136,9 @@ public class MenuBarEvent extends JFrame implements ActionListener,Runnable{
         else
             System.out.println("not null");
     }
+   public void setDataview(dataplay a){
+        dataview = a ; //传送dataview（类型是dataplay）
+   }
     /*
     * run函数
     * */

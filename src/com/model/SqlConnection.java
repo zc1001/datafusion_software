@@ -1,5 +1,7 @@
 package com.model;
 
+import javax.swing.*;
+import javax.swing.JPanel;
 import java.sql.*;
 
 public class SqlConnection {
@@ -35,6 +37,7 @@ public class SqlConnection {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             System.out.println("未能成功加载驱动程序，请检查是否导入驱动程序！");
+            JOptionPane.showMessageDialog(null, "数据库连接存在问题", "提示", JOptionPane.INFORMATION_MESSAGE);
             //添加一个println，如果加载驱动异常，检查是否添加驱动，或者添加驱动字符串是否错误
             e.printStackTrace();
         }
@@ -169,13 +172,13 @@ public class SqlConnection {
     /*
     * test*/
       public void creatsawdata(){
-          //初始化 语句
+          //初始化 语句  设定指定的通道数量 存放数据类型
           String creatsql = "CREATE TABLE "+daname+"(";
           for(int i=0;i<(tdnum-1);i++)
           {
-              creatsql += ("td"+String.valueOf(i+1)+" int not null,");
+              creatsql += ("td"+String.valueOf(i+1)+" DOUBLE(16,5) not null,");
           }
-           creatsql +=("td"+String.valueOf(tdnum)+" int not null");
+           creatsql +=("td"+String.valueOf(tdnum)+" DOUBLE(16,5) not null");
            creatsql += ")charset=utf8;";
 
           try{

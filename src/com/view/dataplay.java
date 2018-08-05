@@ -31,6 +31,8 @@ public class dataplay extends JFrame {
     JPanel data_panel = new JPanel(); //定义数据的界面
     CardLayout datalayout = new CardLayout(); //定义数据界面布局
     ButtonGroup group;
+    public JTextField textshidu ;  //用来存放湿度的信息，实时刷新
+    public JTextField textwendu ;  //用来存放温度的信息，实时刷新
     dataplayEvent dataevent = new dataplayEvent(); //事件监听
     AppMain j;   //接收APPmain
     String s_com,s_pinlv,snum;   //接收串口配置的字符串
@@ -130,7 +132,16 @@ public class dataplay extends JFrame {
                 control_panel.add(new JLabel(block));
             }
         }
-
+        /*
+        * 初始化存放 温度、湿度，后续将刷新
+        * */
+        textshidu = new JTextField(8);
+        textwendu = new JTextField(8);
+        control_panel.add(new JLabel("实验温度："));
+        control_panel.add(textwendu);
+        control_panel.add(new JLabel("        "));
+        control_panel.add(new JLabel("实验湿度："));
+        control_panel.add(textshidu);
         /*实验信息
         * */
         JLabel b = new JLabel("实验信息                                        ");

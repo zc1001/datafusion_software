@@ -110,6 +110,7 @@ public class AppMain extends JFrame {
             data_view.setMenuEvent(_MenuBarEvent);  //向data_view传送事件监听，让他获取事件监听之后向事件监听传送chart实例
             Mainpanel = data_view.getMainpanel();
             Cpanel.add(Mainpanel,"datapanel");
+            _MenuBarEvent.setDataview(data_view);  //传送数据传送界面
         }
         /*
         * 第三个界面初始化

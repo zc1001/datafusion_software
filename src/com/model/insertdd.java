@@ -1,5 +1,6 @@
 package com.model;
 
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,14 +24,14 @@ public class insertdd {
     String encoding="GBK";
     String s_place,s_temp,s_shi,s_gas,s_other,s_name;  //实验信息
     int tnum;
-    int dnum = 20;   //每次传来多少数据
+    int dnum = 3;   //每次传来多少数据
     File file ;  //创建file数组
     BufferedReader[] br;
-    Integer num[][] ;
+    Double num[][] ;
     String sql;
     public void init(){
       // fpath = "D:\\saw_data\\2018-03-09 20-43-29";
-        num = new Integer[tnum][dnum];
+        num = new Double[tnum][dnum];
        String tpath ;
         br= new BufferedReader[tnum];
         /*
@@ -95,14 +96,14 @@ public class insertdd {
                   {
                       //tnum 循环
                       for(int j=0;j<tnum;j++)
-                          pstm.setInt((j+1),num[j][i]);
+                          pstm.setDouble((j+1),num[j][i]);  //放入double
                       pstm.addBatch();
                   }
-                  num = new Integer[tnum][dnum]; //重新定义
+                  num = new Double[tnum][dnum]; //重新定义
               }
               else
               {
-                  num = new Integer[tnum][dnum]; //重新定义
+                  num = new Double[tnum][dnum]; //重新定义
                   pstm.executeBatch();
                   conn.commit();
                   break;  //退出本组数据
@@ -134,7 +135,8 @@ public class insertdd {
                            }
                    }
         long endTime=System.currentTimeMillis();
-        System.out.println("程序运行时间： "+(endTime-startTime)+"ms");
+        System.out.println(" 类名 insertdd 第 137行 程序运行时间： "+(endTime-startTime)+"ms");
+        JOptionPane.showMessageDialog(null, "数据已上传完成", "提示", JOptionPane.INFORMATION_MESSAGE);
         //关闭输入流
         try{
             for(int i=0;i<tnum;i++)
@@ -172,12 +174,12 @@ public class insertdd {
 
 
     }
-    public Integer[] changetoint(String line){
-        Integer arr[] = new Integer[dnum];
-        String[] ts = line.split(".0");
+    public Double[] changetoint(String line){
+        Double arr[] = new Double[dnum];
+        String[] ts = line.split(" ");
        // System.out.println(ts.length+"hello");
         for(int i=0;i<ts.length;i++)
-            arr[i] = Integer.parseInt(ts[i]);
+            arr[i] = Double.parseDouble(ts[i]);  //类型转换
          return arr;
     }
     public void initSql (){

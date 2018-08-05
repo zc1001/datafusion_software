@@ -29,10 +29,10 @@ public class UserDao {
                 User user=new User();
                 user.setTnum(tnum);  //传送通道数
 
-                int num[] = new int[tnum+1];
+                double num[] = new double[tnum+1];
                 num[0] = time;
                 for(int i=1;i<tnum+1;i++)
-                    num[i] = rs.getInt(i);
+                    num[i] = rs.getDouble(i);
                 time++;  //shiyancishu
                 /*user.setTd1(rs.getInt(1));
                 user.setTd2(rs.getInt(2));

@@ -32,9 +32,9 @@ public class chartinit extends JFrame{
                public void run(){
                    for(int i=0;i<tnum;i++)
                    {
-                       int a[] = new int[q.length];
+                       double a[] = new double[q.length];
                        for(int j=0;j<q.length;j++)
-                           a[j] = (int)q[j][i+1];//存储dao a
+                           a[j] = (double)q[j][i+1];//存储dao a
                       // System.out.println(time);
                        chart[i].getSeries(0).add(a); //放入
 
