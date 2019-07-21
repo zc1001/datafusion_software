@@ -134,7 +134,7 @@ public class JFSwingDynamicChart extends JFrame  {
         }
     }
     public void setNumber(double a){
-        Millisecond now = new Millisecond();
+       // Millisecond now = new Millisecond();
         /*
          * 设定一个set函数，接收数字并显示
          * */

@@ -29,25 +29,25 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
     byte[] readBuffer;
     JFrame frame;
     int numBytes = -1;
-    double b[]; //
     static SerialPort serialPort; // 串口的引用
     // 堵塞队列用来存放读到的数据
-    private BlockingQueue<String> msgQueue = new LinkedBlockingQueue<String>();
     Queue<Double> Queue = new LinkedBlockingQueue<Double>();
-    int time  = 0;  //做测试 设置time为0-7 之中 随机输出数字
     String filepath;
   // FileWriter fw;
     File file[] ;
-    int num = 5;
     int tdn = 9;
-    int k;   //用于double 和int转化
     int bytelenth = 232; //有效数据字节数组的长度,加上温度湿度
-    int bytenum = 29;  //数据包有效数字数量
+    int bytenum = 2;  //在队列中的数据的一组的长度 通道编号加数据
     int allbytelenth = 237; //总共的长度数据包
     FileWriter fw;
     BufferedWriter bw;
     dataplay dataview;
     public volatile boolean exit = false;   //判断进程是否停止
+    int datalength = 9 ;   //数据包的长度 11个字节
+    int byte_read_loc = 0;
+    // 堵塞队列用来存放读到的数据
+    //private BlockingQueue<String> msgQueue = new LinkedBlockingQueue<String>();  //队列用来接收输入流转化为数字的数据 格式为$2$n
+    private  BlockingQueue<Double> change_data_Queue = new LinkedBlockingQueue<Double>();
     @Override
     /**
      * SerialPort EventListene 的方法,持续监听端口上是否有数据流
@@ -66,106 +66,55 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
             case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
                 break;
             case SerialPortEvent.DATA_AVAILABLE:// 当有可用数据时读取数据
-                 readBuffer = new byte[1000];
+                char[] readBuffer = new char[30];
+                byte[] read = new byte[30];
                 try {
-                    numBytes = -1;
-                  //   fw = new FileWriter("D:\\saw_data\\2018-03-03 14-51-36\\通道.txt");
-                  //  b =new double[20];
-                    while (inputStream.available() >=allbytelenth ) { //当数据大于237 的时候 大于总长度可以输出
-                        numBytes = inputStream.read(readBuffer);
-                        int loc = 0;
-                       while(loc<numBytes)
-                       {
-                          // System.out.println("接收字节数   "+numBytes+"第78行");
-                           /*此部分未做一组数组可能接受两组或以上数据的情况，可以吧上面的if改成while*/
-                           //输出得到的数据
-                           //System.out.println(numBytes);
-                          // String d =new String();
-                           /*开始进行数据包确定*/
-                           while((readBuffer[loc]!='$'||readBuffer[loc+1]!='$')&&loc<numBytes)
-                           {
-                               loc++;
-                           }
-                           if(numBytes<loc)
-                               break;
-                           if(loc+allbytelenth>numBytes)
-                               break; //丢弃数据 此部分数据为送入数组但是没有完整送入的数据，丢弃
-                         //  System.out.println("数据包头位置"+loc+"  "+"包头："+readBuffer[loc]+"   "+readBuffer[loc+1]+"第86行");
-                         /*  if(loc>=numBytes)
-                               continue;  //如果缓冲区没有数字 退出本次循环*/
-                           /*开始数据校验*/
-                           int youxiaoloc = loc+2; //现在定位是第一个有效字节
-                           byte JYresult = readBuffer[youxiaoloc]; //校验结果；
-                           //异或校验
-                           for (int i = 0; i <bytelenth-1; i++) {
-                               JYresult ^=readBuffer[youxiaoloc+i+1];
-                           }
-                           if(readBuffer[loc+bytelenth+2]==JYresult){  //判断是否校验错误
-                               //数据校验正确
-                              // for(int j=0;j<bytenum;j++)  //每次数据共29个数字
-                               for(int i=youxiaoloc;i<youxiaoloc+bytelenth;i+=8)
-                               {
-                                   // d+=String.valueOf(readBuffer[i]);
-                                   // System.out.println("80  "+ readBuffer[i]);   //测试
-                                   /*   转换double*/
-                                   byte[] doubltoby = new byte[8];
-                                   for(int t=0;t<8;t++){
-                                       doubltoby[t] = readBuffer[i+t];
-                                   }
-                                   Queue.add(bytes2Double(doubltoby));
-                                   //  Queue.add((double)(readBuffer[i] - 48));//数字进入队列
-                                   // store((int)(readBuffer[i]-48));
-                                   // System.out.println((double) (readBuffer[i]-48)); //转换成double
-                               }
-                           }
-                           else{
-                               System.out.println("数据校验错误114  "+"数据包数据 "+readBuffer[loc+bytelenth]+"得到校验数据："+JYresult+"第115行");
-                               System.out.println("当前定位："+loc+"    "+"收到的字节数：" + +numBytes+"第118行");
-                               for(int j=loc;j<numBytes;j++)
-                                   System.out.println(j+"     "+readBuffer[j]);
-                           }
-                           loc = loc+bytelenth+5;
-                          // System.out.println("当前定位："+loc+"    "+"收到的字节数：" + +numBytes+"第118行");
+                    int numBytes = -1;
+                    while (inputStream.available() >= datalength) {
+                        //当队列中的数据大于等于数据包的长度的时候可以进行读取
+                        numBytes = inputStream.read(read);
+                        //System.out.println(numBytes);
+                        byte_read_loc = 0; //当前读取的byte的相对位置，
+                        for(int i=0;i<numBytes;i++)
+                        {
+                            //转成char的格式
+                            readBuffer[i] = (char)read[i];
+                            //System.out.println(readBuffer[i]);
+                        }
 
-                        //  Queue.add(bytes2Double(readBuffer));
-                           //将数据写入txt中, 数据是assic
-                           /*if(file ==null)
-                               System.out.println("file is null 82");
-                           FileWriter fw = new FileWriter(file,true);//可在后面加数据不覆盖
-                           fw.write(d);
-                           fw.flush();
-                           fw.close();*/
+                        while(byte_read_loc<numBytes)   //当字节位置一直小于总的readeBuffer的长度
+                        {
+                            while((readBuffer[byte_read_loc]!='$'||readBuffer[byte_read_loc+2]!='$') && byte_read_loc < numBytes)  //找到符合数据头的数据包 查找数据包头位置
+                                byte_read_loc++;
+                            /*if(byte_read_loc > numBytes )
+                                break; //当前位置大于readbuffer的总长度 退出本次循环*/
+                            if(byte_read_loc+datalength>numBytes)  //如果当前位置加数据包的长度大于readbuffer的长度，数据包不完整 应该舍弃
+                                break;
+                            else
+                            {
+                                //开始进行数据的转换
+                                int j = byte_read_loc;
+                                String s = String.valueOf(readBuffer[j+1]);    //保存通道位置
+                                double chanel = Double.parseDouble(s);   //通道数转化成double类型
+                            //    System.out.println("通道数"+chanel);   //测试
+                                change_data_Queue.add(chanel);  //加入通道数
+                                char[] chanel_number = new char[6];
+                                j +=  3;   //跳转到包含数据的位置
+                                for(int i=0;i<6;i++)
+                                    chanel_number[i] = readBuffer[j+i];
+                                double number = char_to_double(chanel_number);  //转化成double
+                                //System.out.println("数据"+number);       //测试
+                                change_data_Queue.add(number);  //加入数字
+                                byte_read_loc += datalength;
 
-                            //   fw.close();
+                            }
 
-                           //store(new String(readBuffer,"UTF-8"));
-                           /*
-                           * ceshi
-                           * */
-                           //传到JSchart中
-                          // (new Thread(this)).start();
-                           /*frame.addWindowListener(new WindowAdapter() {
-                           @Override
-                           public void windowClosing(WindowEvent windowevent) {
-                               System.exit(0);
-                           }
-                       });*/
 
-                           /*
-                           *
-                           * */
-                         //  readBuffer = new byte[50];
-                       }
-                       /* if (numBytes > 0) {
-                            msgQueue.add(new Date() + "真实收到的数据为：-----"
-                                    + new String(readBuffer));
-                            readBuffer = new byte[20];// 重新构造缓冲对象，否则有可能会影响接下来接收的数据
-                        } else {
-                            msgQueue.add("额------没有读到数据");
-                        }*/
+                        }
+                        readBuffer = new char[30];
+                        read = new byte[30];
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
                 }
                 break;
         }
@@ -192,10 +141,10 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
             // 判断端口类型是否为串口
             if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
                 // 判断如果COM4串口存在，就打开该串口
-                if (portId.getName().equals("COM4")) {
+                if (portId.getName().equals("COM5")) {
                     try {
                         // 打开串口名字为COM_4(名字任意),延迟为2毫秒
-                        serialPort = (SerialPort) portId.open("COM_4", 1000);
+                        serialPort = (SerialPort) portId.open("COM_5", 1000);
 
                     } catch (PortInUseException e) {
                         e.printStackTrace();
@@ -240,25 +189,35 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
     @Override
     public void run() {
         // TODO Auto-generated method stub
-
+        int chanel_number = 0;   //初始化通道的变量和数据的变量
+        double data = 0;
+        FileWriter fww;  //声明初始化的写入filewriter
+        BufferedWriter bww;
 
         //System.out.println("--------------任务处理线程运行了--------------");
 
-        FileWriter fww[] = new FileWriter[tdn];
-        BufferedWriter bww[] = new BufferedWriter[tdn];
+        //创建输入的文件
         try {
-            for (int i = 0; i < tdn; i++) {
-                fww[i] = new FileWriter(file[i], true);
-                bww[i] = new BufferedWriter(fww[i]);
-
-            }
+            fww = new FileWriter(file[0], true);
+            bww = new BufferedWriter(fww);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        long num = 0;
+
         while (!exit) {
             // 如果堵塞队列中存在数据就将其输出
-            if (Queue.size() >= bytenum) {
+            if (change_data_Queue.size() >= bytenum) {
+
+                try{
+                    double a = change_data_Queue.take();  //提取double 下一步转换成int
+                    chanel_number = (int)a;   //做强制转换成int
+                    data = change_data_Queue.take();
+                }catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+
 
                       /* String t = new String();
                        for (int i = 0; i < bytenum; i++) {
@@ -280,20 +239,20 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
                        }*/
                 /*
                  * 开始数据传送到每一个表格中，开始传送*/
-                for (int i = 0; i < tdn; i++) {
+                /*for (int i = 0; i < tdn; i++) {
                     double tdshuju[] = new double[3]; //传送数据的数组‘
                     for (int j = 0; j < 3; j++) {
                         //System.out.println(Queue.element());
                         tdshuju[j] = Queue.remove();  //放入数据
 
-                    }
+                    }*/
                  //  System.out.println("第"+i+"通道       ");
-                    datatransport(Jchart[i], tdshuju, bww[i], fww[i]); //进行数据存储
-                }
+                    datatransport(Jchart[chanel_number-1],data,chanel_number-1); //进行数据存储 通道数量从0为第一个 所以需要减法
 
+                if(chanel_number == 10)
                 try{
                    // System.out.println("温度是 在293行 第"+num+"个    "+"：    "+Queue.element());
-                    dataview.textwendu.setText(String.valueOf(Queue.remove()));//温度
+                    dataview.textwendu.setText(String.valueOf(data));//温度
                     // Queue.remove();//温度、湿度
                    // System.out.println("湿度是 在296行 第"+num+"个    "+"：    "+Queue.element());
                    // num++; //定义计数
@@ -371,9 +330,9 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
         }*/
             }
         }
-        for(int i=0;i<9;i++)
+
             try {
-                bww[i].close();
+                //bww.close();
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -485,13 +444,14 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
             //关闭串口
             serialPort.close();
         }
-        public  double bytes2Double(byte[] arr) {
-            long value = 0;
-            for (int i = 0; i < 8; i++) {
-                value |= ((long) (arr[i] & 0xff)) << (8 * i);
-            }
-            return Double.longBitsToDouble(value);
-        }
+    //实现六个char型的字符转换到double的实际数据 留出接口
+    double char_to_double(char byte_num[])
+    {
+        String s = String.valueOf(byte_num);
+        int num = Integer.parseInt(s,16);
+        double a = Double.valueOf(num);
+        return a;
+    }
         /*
         * 传递dataplay的界面 为了变化湿度温度 */
         public void setDataview(dataplay a){
@@ -500,38 +460,37 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
 
         /*
         * 处理传入的数据*/
-        public void datatransport(JFSwingDynamicChart Jchart,double[] data,BufferedWriter bww,FileWriter fww){
+        public void datatransport(JFSwingDynamicChart Jchart,double data,int chanel_number){
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     String str = new String();  //字符串用于存储
-                    for(int i=0;i<data.length;i++){
+
                     try{
-                         if(data[i]==0){
-                             str += "0.00";
-                             str +=" "; //在存储中显示没有数据，但空白数据不在图像中显示
-                             continue;  //如果是0跳过本次循环表示没有数据
-                         }
+
 
                          //  System.out.println(data[i]);
-                            Jchart.setNumber(data[i]); //传入数据
-                            Thread.sleep(15);  //
-                            str += String.valueOf(data[i]);  //放入str
-                            str += " ";
+
+                            Jchart.setNumber(data); //传入数据
+                            Thread.sleep(1);  //
+                            str+= String.valueOf(chanel_number);
+                            str+= ",";
+                            str += String.valueOf(data);  //放入str
+                            str += "\r\n";
                            // System.out.println("存入字符串："+str);
                         } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    }
-                    str += "\r\n";
-                    try{
+
+
+                   /* try{
                         bww.write(str);
                         bww.flush();  //刷新并关闭
                       //  bww.close();
                     }catch (IOException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
-                    }
+                    }*/
                 }
             }).start();
         }
