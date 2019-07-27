@@ -6,7 +6,12 @@ import java.sql.*;
 
 public class SqlConnection {
     //这里是SqlConnection 类
-
+    /*
+    * 建立数据库的连接
+    * 从此类负责创建数据库中的信息表
+    * 也创建了数据库中的数据表
+    *
+    * */
     /*
      *java连接mysql数据库
      *1、加载驱动程序
@@ -173,6 +178,8 @@ public class SqlConnection {
     * test*/
       public void creatsawdata(){
           //初始化 语句  设定指定的通道数量 存放数据类型
+          daname = daname.replace('-','_');
+         // System.out.println(daname);
           String creatsql = "CREATE TABLE "+daname+"(";
           for(int i=0;i<(tdnum-1);i++)
           {

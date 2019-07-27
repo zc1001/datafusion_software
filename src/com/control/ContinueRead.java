@@ -32,19 +32,21 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
     static SerialPort serialPort; // 串口的引用
     // 堵塞队列用来存放读到的数据
     Queue<Double> Queue = new LinkedBlockingQueue<Double>();
-    String filepath;
+    String filepath;           //存放数据的文件夹 命名为当天的日期
+    String data_filepath;    //存放数据的路径  命名为当天的时间
   // FileWriter fw;
-    File file[] ;
+   // File file[] ;
+    File txt_file;  //用于存储数据文件
     int tdn = 9;
     int bytelenth = 232; //有效数据字节数组的长度,加上温度湿度
     int bytenum = 2;  //在队列中的数据的一组的长度 通道编号加数据
     int allbytelenth = 237; //总共的长度数据包
-    FileWriter fw;
-    BufferedWriter bw;
     dataplay dataview;
     public volatile boolean exit = false;   //判断进程是否停止
     int datalength = 9 ;   //数据包的长度 11个字节
     int byte_read_loc = 0;
+    FileWriter fw;  //声明初始化的写入filewriter
+    BufferedWriter bw;
     // 堵塞队列用来存放读到的数据
     //private BlockingQueue<String> msgQueue = new LinkedBlockingQueue<String>();  //队列用来接收输入流转化为数字的数据 格式为$2$n
     private  BlockingQueue<Double> change_data_Queue = new LinkedBlockingQueue<Double>();
@@ -102,9 +104,11 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
                                 j +=  3;   //跳转到包含数据的位置
                                 for(int i=0;i<6;i++)
                                     chanel_number[i] = readBuffer[j+i];
+                                s  = s+ ','+ String.valueOf(chanel_number)+"\r\n";   //转换字符串
                                 double number = char_to_double(chanel_number);  //转化成double
                                 //System.out.println("数据"+number);       //测试
                                 change_data_Queue.add(number);  //加入数字
+                                StoreData(s);   //存储数据 格式为原始格式
                                 byte_read_loc += datalength;
 
                             }
@@ -141,10 +145,10 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
             // 判断端口类型是否为串口
             if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
                 // 判断如果COM4串口存在，就打开该串口
-                if (portId.getName().equals("COM5")) {
+                if (portId.getName().equals("COM4")) {
                     try {
                         // 打开串口名字为COM_4(名字任意),延迟为2毫秒
-                        serialPort = (SerialPort) portId.open("COM_5", 1000);
+                        serialPort = (SerialPort) portId.open("COM_4", 1000);
 
                     } catch (PortInUseException e) {
                         e.printStackTrace();
@@ -191,18 +195,17 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
         // TODO Auto-generated method stub
         int chanel_number = 0;   //初始化通道的变量和数据的变量
         double data = 0;
-        FileWriter fww;  //声明初始化的写入filewriter
-        BufferedWriter bww;
+
 
         //System.out.println("--------------任务处理线程运行了--------------");
 
         //创建输入的文件
-        try {
+        /*try {
             fww = new FileWriter(file[0], true);
             bww = new BufferedWriter(fww);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
 
         while (!exit) {
             // 如果堵塞队列中存在数据就将其输出
@@ -374,11 +377,40 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
  public void setFrame(JFrame f){
      frame = f;
  }
-        public void setFilepath(String path) {
+        public void setFilepath(String path,String filename) {
+        /*
+        * 用于在特定的文件夹中创建文件，path 为文件夹的路径 命名为年月日，filename为文件，命名为年月日+时间
+        * 并且创建读写的相关变量 filewriter bufferwriter
+        * */
             filepath = path;
+            data_filepath = filename;   //存储用于存放数据的路径
             //创建txt文件
-            String fpath = filepath;  //文件地址变量
-            file = new File[tdn];   //此处当前的固定
+            data_filepath = filename+".txt";;  //文件地址变量
+            //System.out.println(data_filepath);
+            txt_file = new File(data_filepath);
+            if (!txt_file.isFile()) {
+                try {
+                    //System.out.println(fpath);
+                    txt_file.createNewFile();
+                } catch (IOException e) {
+                    System.out.println("创建文件夹失败" + data_filepath);
+                    e.printStackTrace();
+                }
+            }
+            //用于创建相关的读写变量 此变量已经在全局声明，现在进行设定 只在一个文件中读写数据
+            try{
+                fw = new FileWriter(txt_file,true);//可在后面加数据不覆盖
+                bw = new BufferedWriter (fw);  //创建bw
+            }catch (IOException e){
+                System.out.println("创建filewriter失败           代码位置：ContinueRead.Setfilepath");
+                e.printStackTrace();
+            }
+
+            /*
+            *
+            * 下面的代码是之前用于创建动态的通道的之后也可以用
+            * */
+          /*  file = new File[tdn];   //此处当前的固定
             for(int i = 0;i<tdn;i++)   //循环 定义每一个文件，变量file[i]代表 通道i的文件
             {
                 fpath = filepath+"//"+String.valueOf(i+1)+"通道"+".txt";
@@ -392,7 +424,7 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
                         e.printStackTrace();
                     }
                 }
-            }
+            }*/
           //  filepath += "//通道.txt";
            /*file = new File(filepath);
             if (!file.isFile()) {
@@ -443,6 +475,12 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
             exit = true;  //结束进程
             //关闭串口
             serialPort.close();
+            //关闭bww
+            try {
+                bw.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     //实现六个char型的字符转换到double的实际数据 留出接口
     double char_to_double(char byte_num[])
@@ -458,6 +496,17 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
             dataview = a;
         }
 
+        public void StoreData(String s)
+        {
+            //System.out.println(s);
+          try{
+              bw.write(s);   //存储数据
+              bw.flush();
+          }catch (IOException e){
+              e.printStackTrace();
+          }
+
+        }
         /*
         * 处理传入的数据*/
         public void datatransport(JFSwingDynamicChart Jchart,double data,int chanel_number){
