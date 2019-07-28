@@ -513,7 +513,7 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    String str = new String();  //字符串用于存储
+                   // String str = new String();  //字符串用于存储
 
                     try{
 
@@ -522,10 +522,10 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
 
                             Jchart.setNumber(data); //传入数据
                             Thread.sleep(1);  //
-                            str+= String.valueOf(chanel_number);
-                            str+= ",";
-                            str += String.valueOf(data);  //放入str
-                            str += "\r\n";
+                           // str+= String.valueOf(chanel_number);
+                            //str+= ",";
+                            //str += String.valueOf(data);  //放入str
+                            //str += "\r\n";
                            // System.out.println("存入字符串："+str);
                         } catch (InterruptedException e) {
                         e.printStackTrace();

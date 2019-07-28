@@ -79,7 +79,6 @@ public class MenuBarEvent extends JFrame implements ActionListener,Runnable{
             createdate = sdf.format(date);   //获取String类型的时间
             filename = new String("D:\\saw_data\\");
             filename += createdate; //filename存储当前的文件夹
-
             File file = new File(filename);  //创建存放数据文件夹
             //System.out.println(file.getPath());
             if(!file.exists())
@@ -112,15 +111,15 @@ public class MenuBarEvent extends JFrame implements ActionListener,Runnable{
             cd.creatsawdata();  //创建用于存放试验数据的表   存放试验信息的表已经在main函数中初始化
             //实现数据上传
             insertdd inserda = new insertdd();
-            inserda.setFpath(filename);
+            inserda.setFpath(filename+"\\"+create_time);  //filename 是文件夹的的地址  createtime 是创建的时间 （文件的名称）
             inserda.setTnum(tdnum);
-            inserda.setDname(createdate);
+            inserda.setDname(createdate+create_time);  //对应的已经创建好的数据库的表名 在上面的代码已经完成数据库表的创建 使用这个表名进行数据传输
             inserda.setgas(j.s_place,j.s_temp,j.s_shi,j.s_gas,j.s_other,j.s_name);  //传送实验条件
             //上传实验条件信息
               inserda.initxinxi();
               //实验数据
             /* 下一句代码  inserda.init()是传输数据到数据库的语句，之后需要更改，暂时屏蔽*/
-           // inserda.init();
+             inserda.init();
            // cRead.finish();
 
         }

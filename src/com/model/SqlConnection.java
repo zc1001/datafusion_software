@@ -24,7 +24,7 @@ public class SqlConnection {
     private static final String NAME="root";//登录名
     private static final String PASSWORD="1111";//密码
     int tdnum;
-    String filepath;  //文件夹路径
+    String filepath;  //存储数据的文件路径 包括文件夹+ 文件路径
     String daname;   //创建的数据库名
     PreparedStatement pst = null;
     Connection conn = null;       //连接
@@ -132,7 +132,7 @@ public class SqlConnection {
 */
     public void creatmessage(){
          String creatsql = "CREATE TABLE message("
-                    + "s_time varchar(50) not null,"
+                    + "s_time varchar(50) PRIMARY KEY,"
                     +"name varchar(50),"
                     +"con varchar(100),"
                     +"place varchar(50),"
@@ -181,11 +181,15 @@ public class SqlConnection {
           daname = daname.replace('-','_');
          // System.out.println(daname);
           String creatsql = "CREATE TABLE "+daname+"(";
-          for(int i=0;i<(tdnum-1);i++)
+         /* for(int i=0;i<(tdnum-1);i++)
           {
               creatsql += ("td"+String.valueOf(i+1)+" DOUBLE(16,5) not null,");
           }
-           creatsql +=("td"+String.valueOf(tdnum)+" DOUBLE(16,5) not null");
+           creatsql +=("td"+String.valueOf(tdnum)+" DOUBLE(16,5) not null");*/
+          creatsql += "createtime  varchar(50) not null,";
+          creatsql += "channelnumber  DOUBLE(16,5) not null,";
+          creatsql += "datafor16  varchar(50) not null,";
+          creatsql += "datafordouble DOUBLE(16,5) not null";
            creatsql += ")charset=utf8;";
 
           try{
