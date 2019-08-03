@@ -313,6 +313,15 @@ public class AppMain extends JFrame {
     public String getS_com(){ return s_com ;}
     public String getS_pinlv(){return s_pinlv ;}
     public String getSnum(){ return snum; }
+    /*
+    * 传送实验信息
+    * */
+    public String getS_place(){return s_place;}   //传回地点信息
+    public String getS_temp(){return s_temp;}   //传回实验温度
+    public String getS_shi(){return s_shi;}    //传回实验湿度
+    public String getS_gas(){return s_gas;}     //传回实验气体
+    public String getS_other(){return s_other;}
+    public String getS_name(){return s_name;}
      /*
      * 设置哪些按钮可见那些不可见
      * */

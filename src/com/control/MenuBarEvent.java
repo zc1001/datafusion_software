@@ -15,7 +15,10 @@ import com.view.JFSwingDynamicChart;
 import com.control.ContinueRead;
 import com.view.dataplay;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 public class MenuBarEvent extends JFrame implements ActionListener,Runnable{
@@ -90,6 +93,56 @@ public class MenuBarEvent extends JFrame implements ActionListener,Runnable{
            // ContinueRead cRead = new ContinueRead();          //读取串口的信息
             SimpleDateFormat sdf2 = new SimpleDateFormat("HH_mm_ss");  //设置要获取到什么样的
             create_time = sdf2.format(date);   //获取创建的具体时间 可作为创建文件的名称
+
+
+
+
+            //在d//saw_data中创建message文件夹，在message文件夹中创建实验信息文件
+            //在文件夹中写入实验信息的目的是为了之后在查看历史极力的时候可以直接从文件之中读取
+            //这段代很臃肿 以后可以进一步进行修改
+            tdnum = Integer.parseInt(j.getSnum());  //得到通道数量
+            String message_file_path = new String("D:\\saw_data\\message");
+            File message_file = new File(message_file_path);
+            //如果文件夹不存在，则创建文件夹
+            if(!message_file.exists())
+            {
+                message_file.mkdirs();
+            }
+            message_file_path = message_file_path + "\\"+createdate +create_time +".txt";
+            message_file = new File(message_file_path);
+            //在message 文件夹中创建实验的信息文件，对应的文件名称是创建日期 + 创建时间
+            if (!message_file.isFile()) {
+                try {
+                    //System.out.println(fpath);
+                    message_file.createNewFile();
+                } catch (IOException d) {
+                    System.out.println("创建文件夹失败" + message_file_path);
+                    d.printStackTrace();
+                }
+            }
+            //开始写入实验信息
+            FileWriter fw;  //声明初始化的写入filewriter
+            BufferedWriter bw;
+            //创建bw 用于写入文件
+            try{
+                fw = new FileWriter(message_file,true);//可在后面加数据不覆盖
+                bw = new BufferedWriter (fw);  //创建bw
+                //开始写入实验信息
+                bw.write("实验时间:"+createdate+create_time+"\r\n");  //写入实验信息
+                bw.write("通道数量:"+tdnum+"\r\n");
+                bw.write(j.getS_temp()+"\r\n");
+                bw.write(j.getS_name()+"\r\n");
+                bw.write(j.getS_shi()+"\r\n");
+                bw.write(j.getS_place()+"\r\n");
+                bw.write("实验气体:"+j.getS_gas()+"\r\n");
+                bw.write(j.getS_other()+"\r\n");
+                bw.flush();
+                bw.close();
+            }catch (Exception b){
+                b.printStackTrace();
+            }
+
+            //进行传送数据文件的创建 并对Continueread 类的初始化
             String data_filepath = filename + "\\"+create_time;    //创建文件的名称
             cRead.setFilepath(filename,data_filepath);  //同时完成文件的创建
             cRead.setJchart(Jchart);

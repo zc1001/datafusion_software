@@ -105,6 +105,7 @@ public class table extends JFrame {
      */
     public Object[][] queryData(){
         List<User> list=user.queryAllUser();
+        //System.out.println(list.size());
         data=new Object[list.size()][head.length+1];
        // System.out.println(list.size());
         for(int i=0;i<list.size();i++){

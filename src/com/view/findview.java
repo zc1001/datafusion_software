@@ -1,4 +1,8 @@
+//目前显示时间的jtable只能显示28个左右的时间，这个还没找到原因
+//这部分代码在232行左右
+
 package com.view;
+import com.model.ReadMessage;
 import com.model.SqlConnection;
 
 import javax.swing.*;
@@ -12,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.io.File;
 import java.util.Vector;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.MouseAdapter;
 import java.sql.ResultSet;
@@ -32,13 +37,13 @@ public class findview extends JFrame {
     JPanel C_tablepanel = new JPanel(C_tablelayout);  //实验信息界面
     JPanel search = new JPanel();  //查询的panel
     CardLayout dalayout = new CardLayout();  //cardpanel 定义  查看数据的界面
-    JPanel dapanel = new JPanel(dalayout);   //查看数据的界面
-    JScrollPane tablepanel;
+    JPanel dapanel = new JPanel(dalayout);   //查看数据的界面 包括三种 实验信息界面、折线图界面、数据界面
+    JScrollPane tablepanel;          //放入Jtable(查询实验时间用的)的界面
      JTable block;           //定义Jtable 包括初始 之后加入数据
     List<String> fname=new ArrayList<String>();   //所有文件名
     List<String> needfilename=new ArrayList<String>();//查到的文件名
     JPanel dnpanel = new JPanel();  //显示数据的界面
-    JScrollPane tpanel = new JScrollPane();
+    JScrollPane tpanel = new JScrollPane();   //存放数据 数字形式存储的界面
     String date = new String();
     String choose = new String();  //选择的时间
     JTable datable;
@@ -56,6 +61,11 @@ public class findview extends JFrame {
     xainshiwait wait = new xainshiwait(); //定义等待
     find_xinxiview Fxinxiview = new find_xinxiview();   //查看信息的界面
    // JTable block = new JTable(); //定义table
+
+   /*
+   * 查询功能的初始化
+   * */
+
     public void mainpanelinit(){
         mainpanel.setLayout(mainlayout);
         wait.setFind(this);  //传入find
@@ -71,7 +81,7 @@ public class findview extends JFrame {
     * 数据界面初始化
     * */
     private void daviewini(){
-        datable = new JTable(39,8){
+        datable = new JTable(1000,8){
             public boolean isCellEditable(int row, int column) {return false;};  //表格重写 实现可以选中的功能
         };
         tpanel = new JScrollPane(datable);
@@ -142,16 +152,16 @@ public class findview extends JFrame {
             public void mouseClicked(MouseEvent e) {//仅当鼠标单击时响应
 
                 //得到选中的行列的索引值
-                if(e.getClickCount() == 2) {
+                if(e.getClickCount() == 2) {  //双击时监听
                     int r= block.getSelectedRow();
 
                     int c= block.getSelectedColumn();
 
                     //得到选中的单元格的值，表格中都是字符串
 
-                    Object value= block.getValueAt(r, c);
+                    Object value= block.getValueAt(r, c);   //获取当前选择的值  在jtable中的
                     String info=value.toString();
-                    choose = info;
+                    choose = info;   //确定选中的值
                    // System.out.println(info);
                     //searchxinxi();  //查询实验信息
                     wait.init();//创建表格 等待开始
@@ -219,7 +229,7 @@ public class findview extends JFrame {
         search.add(radio2);
         search.add(radio3);
 
-       block = new JTable(25,1){
+        block = new JTable(30,1){
            public boolean isCellEditable(int row, int column) {return false;};  //表格重写 实现可以选中的功能
        };
       // block.setBackground(Color.lightGray);
@@ -229,7 +239,7 @@ public class findview extends JFrame {
             block.getColumnModel().getColumn(0).setPreferredWidth(10);
 
         block.getColumnModel().getColumn(0).setHeaderValue("实验时间");
-        JScrollPane tablepanel = new JScrollPane (block);
+        tablepanel = new JScrollPane (block);
         tablepanel.setPreferredSize(new Dimension(260,500));  //设定JScrollpan 大小  主要是放入table
         C_tablepanel.add(tablepanel,"first");  //把 tablepanel 变成cardpanel
         C_tablelayout.first(C_tablepanel);
@@ -248,27 +258,47 @@ public class findview extends JFrame {
      * 获取需要文件夹的名字
      * */
      public void getfineme(String s){
+         s = s.replace('_','-');
+        // System.out.println("获取时间"+s+"huoqushijian");
         //获取所有文件
          String filepath = "D:\\saw_data";//D盘下的file文件夹的目录
           File file = new File(filepath);//File类型可以是文件也可以是文件夹
          File[] fileList = file.listFiles();//将该目录下的所有文件放置在一个File类型的数组中
+         File[] data_filelist;   //每一个日期的文件夹中的所有文件
          //获取所有文件 fname中
          for (int i = 0; i < fileList.length; i++) {
-             if (fileList[i].isDirectory()) {//判断是否为文件夹
-                 String mm = fileList[i].getPath();
-                 mm = mm.substring(12,mm.length());
-                 fname.add(mm);
+             if (fileList[i].isDirectory() && (fileList[i].getName() != "message")) {//判断是否为文件夹
+                 String file_data = fileList[i].getName();  //获取日期文件夹的名字  2019-07-29
+                 data_filelist = fileList[i].listFiles();  //获取日期文件夹中的所有文件
+                 for(int j=0; j<data_filelist.length;j++)
+                 {
+                     String file_time = data_filelist[j].getName();  //获取日期文件夹中的每一个日期的名字 08_35_18
+                     //System.out.println("文件夹"+file_data+file_time);
+                     fname.add(file_data + "  "+file_time);
+                 }
              }
          }
          //查询所有的符合的文件夹名 并存放
          int num = fname.size();  //文件夹的数量
        //  System.out.println(num);
-         for(int i=0;i<num;i++)
+         if(s != null)
          {
-             if(fname.get(i).indexOf(s) != -1)
-                 needfilename.add(fname.get(i));
+             //s 不是空 表名这时已经选中了时间
+             for(int i=0;i<num;i++)
+             {
+                 if((fname.get(i).indexOf(s) != -1)&& fname.get(i).indexOf("message")== -1)  //字符串之中 有对应的时间但没有 message 主要是为了避免message中的信息也出现在这里面
+                     needfilename.add(fname.get(i));
 
+
+             }
          }
+         else
+         {
+             //s 是空表明没有选择日期 需要所有的日期
+             for(int i=0;i<num;i++)
+                 needfilename.add(fname.get(i));
+         }
+
          /*int a = needfilename.size();
          for(int i=0;i<a;i++)
          {
@@ -289,7 +319,10 @@ public class findview extends JFrame {
          vName.add("时间");   //列名称
          Vector vRow = new Vector();
          int n = needfilename.size();
-         for(int i=0;i<n;i++)
+
+         //这段代码有问题
+         //目前显示时间的jtable只能显示28个左右的时间，这个还没找到原因
+         for(int i=n-1;i>=0;i--)
          {
              vRow = new Vector();
              vRow.add(needfilename.get(i));
@@ -297,22 +330,34 @@ public class findview extends JFrame {
             // System.out.println(vRow.get(0));
              vData.add(vRow);
          }
+        //  System.out.println(vData.size());
      /*  Object[]tablename = {"时间"};
        Object[] filname = new Object[needfilename.size()];
        for(int i=0;i<needfilename.size();i++)
            filname[i] = needfilename.get(i);*/
-
+         // System.out.println(vRow.);
          DefaultTableModel m = new DefaultTableModel(vData,vName);
          block.setModel(m);
+
+        /* DefaultTableModel tableModel = (DefaultTableModel) block.getModel();
+         for(int i=0;i<needfilename.size();i++)
+              tableModel.addRow(new Object[]{needfilename.get(i)});
+         //block.updateUI();
+         tablepanel.validate();
+         SwingUtilities.updateComponentTreeUI(block);*/
+
      }
      /*
      * 查询mysql中的文件，查询实验信息，主要用于之后的查询以及显示实验信息
+     * 现在改成了直接在相应的文件夹之中的message文件夹中的文件查询
      * */
      public void searchxinxi(){
          datime = choose;
-         SqlConnection seach = new SqlConnection();
+         //SqlConnection seach = new SqlConnection();
          shiyanxinxi = new String[8];  //存入实验信息 分别是时间、名称、备注、地点、温度、湿度、气体、 实验数量是固定
-         shiyanxinxi =seach.TheSqlConnection(datime);
+         //shiyanxinxi =seach.TheSqlConnection(datime);
+         ReadMessage readmessage = new ReadMessage();  //单独开键的类 用于传送文件夹中的实验信息
+         shiyanxinxi = readmessage.Readmessage(datime);
          //获取实验信息
        // System.out.println(shiyanxinxi[7]);
          tdnum = Integer.parseInt(shiyanxinxi[7]);
@@ -376,6 +421,7 @@ public class findview extends JFrame {
                group.add(radio);
                control.add(radio);
            }
+           //创建 Teechart 并传入数据
            chartinit chartview = new chartinit();
            chartview.init(tdnum,queryd);
           /* TXzpanel = chartview.getTuxiangpanel();  //huoqu panel
@@ -413,8 +459,9 @@ public class findview extends JFrame {
                 tfDate.requestFocusInWindow();
                 String s = tfDate.getText();  //获取时间
                 date = s;
+               // date.replace('-','_');
                 getfineme(s);
-               // System.out.println(s);
+               //System.out.println(s);
             }
 
 

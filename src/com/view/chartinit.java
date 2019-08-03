@@ -9,6 +9,9 @@ import javax.swing.*;
 import java.awt.*;
 /*
 * 创建图像的
+* 这个是创建数字图像的
+* 传入一个大的数组作为数据
+* g 是通道数据
 * */
 public class chartinit extends JFrame{
    int tnum;
