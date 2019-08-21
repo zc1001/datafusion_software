@@ -1,0 +1,25 @@
+<component name="ArtifactManager">
+  <artifact name="work_space:jar2">
+    <output-path>$PROJECT_DIR$/out/artifacts/work_space_jar2</output-path>
+    <root id="root">
+      <element id="archive" name="work_space.jar">
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/tojar/META-INF/MANIFEST.MF" />
+        </element>
+        <element id="module-output" name="work_space" />
+      </element>
+      <element id="file-copy" path="D:/teechart/TeeChart.Swing.jar" />
+      <element id="file-copy" path="D:/poi/3.8-j/poi-3.8/dom4j-1.6.1.jar" />
+      <element id="file-copy" path="D:/poi/3.8-j/poi-3.8/poi-ooxml-3.8-20120326.jar" />
+      <element id="file-copy" path="E:/虚拟串口/jar包/mfz-rxtx-2.2-20081207-win-x64/RXTXcomm.jar" />
+      <element id="file-copy" path="E:/Jfreechart/jfreechart-1.0.19/lib/jfreechart-1.0.19.jar" />
+      <element id="file-copy" path="E:/mysqljar/MYSQL驱动包/mysql-connector-java-5.1.7-bin.jar" />
+      <element id="file-copy" path="D:/poi/3.8-j/poi-3.8/poi-3.8-20120326.jar" />
+      <element id="file-copy" path="D:/poi/3.8-j/poi-3.8/stax-api-1.0.1.jar" />
+      <element id="file-copy" path="D:/poi/3.8-j/poi-3.8/xmlbeans-2.3.0.jar" />
+      <element id="file-copy" path="E:/Jfreechart/jfreechart-1.0.19/lib/jcommon-1.0.23.jar" />
+      <element id="file-copy" path="D:/poi/3.8-j/poi-3.8/poi-ooxml-schemas-3.8-20120326.jar" />
+      <element id="file-copy" path="E:/zhuti/SwingSets3(BeautyEyeLNFDemo).jar" />
+    </root>
+  </artifact>
+</component>

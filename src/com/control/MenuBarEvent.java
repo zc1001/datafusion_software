@@ -39,6 +39,7 @@ public class MenuBarEvent extends JFrame implements ActionListener,Runnable{
         this.EventName = eventName;
     }
     dataplay dataview;   //接收传送数据界面，可以随时更改 传送给continue read
+    String com_num ,botelv;    //定义 com数、波特率
     /*先定义set 在APPmain中定义，传过来之后，使用本地的函数调用此函数，获取APPMain，然后处理,在函数中定义可以 OK
     * */
     public AppMain setAPP(AppMain appm){
@@ -145,6 +146,8 @@ public class MenuBarEvent extends JFrame implements ActionListener,Runnable{
             //进行传送数据文件的创建 并对Continueread 类的初始化
             String data_filepath = filename + "\\"+create_time;    //创建文件的名称
             cRead.setFilepath(filename,data_filepath);  //同时完成文件的创建
+            cRead.setCom_num(j.getS_com());  //传送通道数
+            cRead.setBotelv(j.getS_pinlv());  //波特率
             cRead.setJchart(Jchart);
             cRead.setDataview(dataview);  //传送dataview dataplay类型
             cRead.setFrame(frame);

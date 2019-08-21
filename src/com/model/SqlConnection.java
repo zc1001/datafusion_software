@@ -22,7 +22,7 @@ public class SqlConnection {
 
     private static final String URL="jdbc:mysql://localhost:3306/dd";//数据库连接字符串，这里的deom为数据库名
     private static final String NAME="root";//登录名
-    private static final String PASSWORD="1111";//密码
+    private static final String PASSWORD="111111";//密码
     int tdnum;
     String filepath;  //存储数据的文件路径 包括文件夹+ 文件路径
     String daname;   //创建的数据库名

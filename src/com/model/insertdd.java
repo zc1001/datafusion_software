@@ -15,7 +15,7 @@ import java.sql.*;
 public class insertdd {
     private static final String URL="jdbc:mysql://localhost:3306/dd?rewriteBatchedStatements=true";//数据库连接字符串，这里的deom为数据库名
     private static final String NAME="root";//登录名
-    private static final String PASSWORD="1111";//密码
+    private static final String PASSWORD="111111";//密码
     Connection conn = null;
     PreparedStatement pstm =null;
     ResultSet rt = null;

@@ -10,7 +10,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://E:/Jfreechart/jfreechart-1.0.19/lib/jcommon-1.0.23.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/dom4j-1.6.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -19,7 +19,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://E:/Jfreechart/jfreechart-1.0.19/lib/jfreechart-1.0.19.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jcommon-1.0.23.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -28,7 +28,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://E:/虚拟串口/jar包/mfz-rxtx-2.2-20081207-win-x64/RXTXcomm.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jfreechart-1.0.19.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -37,7 +37,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://E:/mysqljar/MYSQL驱动包/mysql-connector-java-5.1.7-bin.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/mysql-connector-java-5.1.7-bin.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -46,7 +46,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://D:/teechart/TeeChart.Swing.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/poi-3.8-20120326.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -55,7 +55,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://D:/poi/3.8-j/poi-3.8/poi-3.8-20120326.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/poi-ooxml-3.8-20120326.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -64,7 +64,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://D:/poi/3.8-j/poi-3.8/poi-ooxml-3.8-20120326.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/poi-ooxml-schemas-3.8-20120326.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -73,7 +73,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://D:/poi/3.8-j/poi-3.8/dom4j-1.6.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/RXTXcomm.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -82,7 +82,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://D:/poi/3.8-j/poi-3.8/poi-ooxml-schemas-3.8-20120326.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/stax-api-1.0.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -91,7 +91,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://D:/poi/3.8-j/poi-3.8/xmlbeans-2.3.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/SwingSets3(BeautyEyeLNFDemo).jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -100,7 +100,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://D:/poi/3.8-j/poi-3.8/stax-api-1.0.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/TeeChart.Swing.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -109,7 +109,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://E:/zhuti/SwingSets3(BeautyEyeLNFDemo).jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/xmlbeans-2.3.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

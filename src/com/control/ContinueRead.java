@@ -47,6 +47,7 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
     int byte_read_loc = 0;
     FileWriter fw;  //声明初始化的写入filewriter
     BufferedWriter bw;
+    String com_num = "COM3",botelv = "9600",com_num2 = "COM_3";   //定义 com数  波特率  默认是这两个，之后在set函数会改
     // 堵塞队列用来存放读到的数据
     //private BlockingQueue<String> msgQueue = new LinkedBlockingQueue<String>();  //队列用来接收输入流转化为数字的数据 格式为$2$n
     private  BlockingQueue<Double> change_data_Queue = new LinkedBlockingQueue<Double>();
@@ -144,12 +145,11 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
           //  System.out.println("12");
             // 判断端口类型是否为串口
             if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-                // 判断如果COM4串口存在，就打开该串口
-                if (portId.getName().equals("COM4")) {
+                // 判断如果COM4串口存在，就打开该串口  ,先打开串口，再打开软件的连接
+                if (portId.getName().equals(com_num)) {       //之前的格式  "COM4"
                     try {
                         // 打开串口名字为COM_4(名字任意),延迟为2毫秒
-                        serialPort = (SerialPort) portId.open("COM_4", 1000);
-
+                        serialPort = (SerialPort) portId.open(com_num2, 1000);    //之前的格式   "COM_4"
                     } catch (PortInUseException e) {
                         e.printStackTrace();
                         return 0;
@@ -175,7 +175,7 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
                     // 设置串口的一些读写参数
                     try {
                         // 比特率、数据位、停止位、奇偶校验位
-                        serialPort.setSerialPortParams(9600,
+                        serialPort.setSerialPortParams(115200,
                                 SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
                                 SerialPort.PARITY_NONE);
                     } catch (UnsupportedCommOperationException e) {
@@ -350,6 +350,8 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
             exit = false;  //重新赋值
             start();
         }
+        else
+            JOptionPane.showMessageDialog(new JPanel(), "端口连接未成功，请确认已经插好串口设备 ", "警告",JOptionPane.WARNING_MESSAGE);
     }
  /*   public static void main(String[] args) {
         ContinueRead cRead = new ContinueRead();
@@ -477,7 +479,8 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
             serialPort.close();
             //关闭bww
             try {
-                bw.close();
+                if(bw != null)
+                   bw.close();
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -494,6 +497,19 @@ public class ContinueRead extends Thread implements SerialPortEventListener { //
         * 传递dataplay的界面 为了变化湿度温度 */
         public void setDataview(dataplay a){
             dataview = a;
+        }
+        public void setCom_num(String s){
+            if(s != null){
+                com_num = s;
+                com_num2 = s.substring(0,3) + '_' + s.substring(3,s.length());
+            }
+
+
+           // System.out.println(com_num +"    "+ com_num2);
+        }
+        public void setBotelv(String s){
+            if(s != null)  //如果没有传入数，使用默认值
+               botelv = s;
         }
 
         public void StoreData(String s)

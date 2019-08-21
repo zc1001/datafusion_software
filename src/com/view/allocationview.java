@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.Toolkit;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.util.regex.Pattern;
 
 import com.Main;
 import com.view.AppMain;
@@ -66,8 +67,22 @@ public class allocationview extends JFrame  implements ActionListener,ItemListen
          c.add(new JLabel("      请选择串口数量"));
          comBox = new JComboBox();
          comBox.addItem("        ");
-         comBox.addItem("  COM1  ");
-         comBox.addItem("  COM2  ");
+         comBox.addItem("COM1");
+         comBox.addItem("COM2");
+         comBox.addItem("COM3");
+         comBox.addItem("COM4");
+         comBox.addItem("COM5");
+         comBox.addItem("COM6");
+         comBox.addItem("COM7");
+         comBox.addItem("COM8");
+         comBox.addItem("COM9");
+         comBox.addItem("COM10");
+         comBox.addItem("COM11");
+         comBox.addItem("COM12");
+         comBox.addItem("COM13");
+         comBox.addItem("COM14");
+         comBox.addItem("COM15");
+         comBox.addItem("COM16");
          comBox.addItemListener(this);
          c.add(comBox);
          c.add(new JLabel("   "));
@@ -149,10 +164,16 @@ public class allocationview extends JFrame  implements ActionListener,ItemListen
          System.out.println(s_com);
          System.out.println(s_pinlv);
          System.out.println(snum);
-         j.setS_com(s_com);
+         if(s_com != null)
+           j.setS_com(s_com);
+         else
+             JOptionPane.showMessageDialog(this, "请选择端口", "警告",JOptionPane.WARNING_MESSAGE);
          j.setS_pinlv(s_pinlv);
-         j.setSnum(snum);
-        // Main.ifallo = true;
+         if(snum != null  && isInteger(snum))  //如果snum不是是空 或者不是个数字
+           j.setSnum(snum);
+         else
+             JOptionPane.showMessageDialog(this, "请输入通道数量 请输入阿拉伯数字 如 7 ", "警告",JOptionPane.WARNING_MESSAGE);
+         // Main.ifallo = true;
          d.setVisible(false);
           j.changebuttonvisauble(new int[]{1,2,3}); //重新设定可见性
 
@@ -162,7 +183,10 @@ public class allocationview extends JFrame  implements ActionListener,ItemListen
      }
     }
 
-
+    public static boolean isInteger(String str) {
+        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
+        return pattern.matcher(str).matches();
+    }
 
 
 }

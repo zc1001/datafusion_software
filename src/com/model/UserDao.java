@@ -64,7 +64,7 @@ public class UserDao {
                 s = line.substring(0,1);   //获取第一个字符串
                 chanel = Integer.parseInt(s);   //进行数据转换
                 s = line.substring(2,line.length());   //获取对应的数据
-                chanel_data = string_to_double(s);   //通道数据的转化
+                chanel_data = string_to_double(chanel,s);   //通道数据的转化
                 //System.out.println(chanel);
                 //对数据进行判断，先用 flag进行预判，初始值是false，当判断已经符合数据要求之后将它改为true，当预判结果为数据已经符合要求，当前的通道数为1（一直寻找第一个通道数量为 1 的数据），
                 //将他存到数组的相应位置
@@ -148,12 +148,18 @@ public class UserDao {
         }*/
         return list;
     }
-    public double string_to_double(String s)
+    public double string_to_double(int chanel,String s)
     {
         //实现string类型 转换double
         //这一部分和continueRead 类中的转换规则一致
         int num = Integer.parseInt(s,16);
-        double a = Double.valueOf(num);
+        double a = 0;   //最后的结果
+        //通道不同，参数不同  目前在 显示、存储还没有更改
+        if(chanel <=4)  //电化学通道
+           a = Double.valueOf(num) * 0.03662-1.2-1200;
+        else
+            a = 0.00014305115 -1.2 - 1200;
+
         return a;
     }
    public void finish(){

@@ -1,21 +1,38 @@
+/*
+*在原有的基础上，添加了鼠标的功能，主要是在view包下添加了pannable
+* pannablexyplot  panningchartpanel 三个类，
+* 在此类重写  createXYLineChart  createRandomSeries 两个函数，对 createChart函数进行更改，同时在createUI函数中加入了
+* PanningChartPanel chartPanel = new PanningChartPanel(createChart(dataset));语句
+* */
 package com.view;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.labels.StandardXYToolTipGenerator;
+import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.urls.StandardXYURLGenerator;
 import org.jfree.data.time.Millisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.DateTickUnit;
+import org.jfree.data.xy.XYSeries;
+
 import java.text.SimpleDateFormat;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Date;
+import java.util.Random;
+
+import static org.jfree.chart.ChartFactory.createXYLineChart;
 
 /*
 * 实现数据的曲线显示
@@ -77,7 +94,7 @@ public class JFSwingDynamicChart extends JFrame  {
          String title = new String("第"+gonum+"通道");
         series = new TimeSeries(title, Millisecond.class);
         TimeSeriesCollection dataset = new TimeSeriesCollection(this.series);
-        ChartPanel chartPanel = new ChartPanel(createChart(dataset));
+        PanningChartPanel chartPanel = new PanningChartPanel(createChart(dataset));  //这里进行更改，添加了鼠标
         //chartPanel.setPreferredSize(new Dimension(500, 270));
 
         JPanel buttonPanel = new JPanel();
@@ -93,21 +110,33 @@ public class JFSwingDynamicChart extends JFrame  {
      * @return
      */
     public JFreeChart createChart(XYDataset dataset) {
-        JFreeChart result = ChartFactory.createTimeSeriesChart("测量数据折线图", "系统当前时间",
-                "动态数值变化", dataset, true, true, false);
-        XYPlot plot = (XYPlot) result.getPlot();
+
+        JFreeChart chart = createXYLineChart("测量数据折线图", // chart title
+                "当前时间", // x axis label
+                "动态数值变化", // y axis label
+                dataset, // data
+                PlotOrientation.VERTICAL, true, // include legend
+                true, // tooltips
+                false // urls
+        );
+        XYPlot plot = (XYPlot)chart.getPlot();
+
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer)plot.getRenderer();
+        renderer.setBaseShapesVisible(false);
+        renderer.setBaseShapesFilled(false);
+
+        // change the auto tick unit selection to integer units only...
+        NumberAxis rangeAxis = (NumberAxis)plot.getRangeAxis();
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         ValueAxis axis = plot.getDomainAxis();
-    //   DateAxis domainAxis = (DateAxis)plot.getDomainAxis();
+        //   DateAxis domainAxis = (DateAxis)plot.getDomainAxis();
 //设置时间间隔和时间轴显示格式：1个月一个间隔
-       // domainAxis.setTickUnit(new DateTickUnit(DateTickUnit.SECOND, 5, new SimpleDateFormat("mm:ss")));
+        // domainAxis.setTickUnit(new DateTickUnit(DateTickUnit.SECOND, 5, new SimpleDateFormat("mm:ss")));
         axis.setAutoRange(true);
         axis.setFixedAutoRange(60000.0);
         axis = plot.getRangeAxis();
-        /*
-        * 设定纵坐标
-        * */
-        //axis.setRange(0.0, 300.0);
-        return result;
+
+        return chart;
     }
 
   /*  public void actionPerformed(ActionEvent e) {
@@ -156,6 +185,42 @@ public class JFSwingDynamicChart extends JFrame  {
     public void setgonum(int i){
         gonum = i;
     }
+
+
+    public static JFreeChart createXYLineChart(String title, String xAxisLabel, String yAxisLabel,
+                                               XYDataset dataset, PlotOrientation orientation, boolean legend, boolean tooltips,
+                                               boolean urls)
+    {
+     /*
+     * 这一部分对横轴进行修改 改成timeAxis
+     * */
+        if (orientation == null)
+        {
+            throw new IllegalArgumentException("Null 'orientation' argument.");
+        }
+        ValueAxis timeAxis = new DateAxis(xAxisLabel);
+        timeAxis.setLowerMargin(0.02D);
+        timeAxis.setUpperMargin(0.02D);
+        NumberAxis xAxis = new NumberAxis(xAxisLabel);
+        xAxis.setAutoRangeIncludesZero(false);
+        NumberAxis yAxis = new NumberAxis(yAxisLabel);
+        XYItemRenderer renderer = new XYLineAndShapeRenderer(true, false);
+
+        XYPlot plot = new PannableXYPlot(dataset, timeAxis, yAxis, renderer);
+        plot.setOrientation(orientation);
+        if (tooltips)
+        {
+            renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+        }
+        if (urls)
+        {
+            renderer.setURLGenerator(new StandardXYURLGenerator());
+        }
+        JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, plot, legend);
+        return chart;
+
+    }
+
 
 
 }

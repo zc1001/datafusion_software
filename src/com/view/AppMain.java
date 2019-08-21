@@ -288,7 +288,6 @@ public class AppMain extends JFrame {
   * */
     public void setS_com(String S1){
         s_com = S1;
-
     }
     public void setS_pinlv(String s2){
         s_pinlv = s2;

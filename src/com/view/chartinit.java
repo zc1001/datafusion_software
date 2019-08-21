@@ -20,7 +20,8 @@ public class chartinit extends JFrame{
    CardLayout tuxianglayout = new CardLayout();
    public void init(int g,Object[][] q){
        panel = new JPanel[g];
-       tuxiangpanel = new JPanel();
+       tnum = g;
+       /*tuxiangpanel = new JPanel();
        tuxiangpanel.setLayout(tuxianglayout);
        tnum = g;
        TChart chart[] = new TChart[tnum];
@@ -59,7 +60,7 @@ public class chartinit extends JFrame{
            panel[i] = new JPanel();
            panel[i].setLayout(new BorderLayout());
            panel[i].add(chart[i],BorderLayout.CENTER);
-       }
+       }*/
      //  panel[2].setBackground(Color.BLUE);
       /* for(int i=0;i<tnum;i++)
        {
@@ -74,6 +75,11 @@ public class chartinit extends JFrame{
       /* panel = new JPanel();
        panel.setLayout(new BorderLayout());
        panel.add(chart[0],BorderLayout.CENTER);*/
+      CreateFindchart creatpanel = new CreateFindchart();
+      creatpanel.setQ(q);  //传送object q
+       creatpanel.setChannel(tnum);
+       panel = creatpanel.createpannel();
+
    }
   //获取
   /*  public JPanel getTuxiangpanel() {
